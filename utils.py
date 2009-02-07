@@ -45,11 +45,11 @@ def memcached(fn):
         if resp is not None:
             return resp
         resp = fn(request, *args, **kwargs)
-    if resp.prevent_cache:
-        return resp
-            resp.expires = datetime.now() + timedelta(7)
-            memcache.add(key, resp)
+        if resp.prevent_cache:
             return resp
+        resp.expires = datetime.now() + timedelta(7)
+        memcache.add(key, resp)
+        return resp
     return _fn
 
 ################################################################################
