@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /create/
+Disallow: /edit/
+Disallow: /delete/
+Disallow: /author/
+Disallow: /ping/

@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>{% block title_ext %}{% endblock %}moritz angermann – journal</title>
+   <link rel="stylesheet" href="/media/css/screen.css" type="text/css" media="screen, projection" />
+   {% if feedburner_id %}
+   <link rel="alternate" type="application/atom+xml" title="Atom 0.3" href="http://feeds.feedburner.com/{{ SETTINGS.FEEDBURNER_ID }}" />
+   {% else %}
+    <link rel="alternate" type="application/atom+xml" title="Atom" href="/feeds/posts/" />
+   {% endif %}
+</head>
+<body>
+<div class="site">
+  <div class="title">
+  <span style="float:right">
+  {% set user = google_users.get_current_user() %}
+    {% if user %}
+    <a href="/admin/">admin panel</a>
+    <a href="{{ google_users.create_logout_url('/') }}">logout</a>
+    {% else %}
+    <a href="{{ google_users.create_login_url('/admin/') }}">admin</a>
+  {% endif %}
+  </span>
+    moritzangermann <a href="/">journal</a>
+    <a href="/archive/">archive</a>
+    <a href="/fineprint">imprint</a>
+    {% if feedburner_id %}
+    <a href="http://feeds.feedburner.com/{{ SETTINGS.FEEDBURNER_ID }}">syndicate</a>
+    {% else %}
+    <a href="/feeds/ports/">syndicate</a>  
+    {% endif %}
+ </div>
+{% block body %}{% endblock %}
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js" type="text/javascript"></script>
+{% if SETTINGS.HYPHENATE %}
+   <script src="/contrib/js/Hyphenator.js" type="text/javascript"></script>
+   <script type="text/javascript">Hyphenator.run();</script>
+{% endif %}
+   <script type="text/javascript">
+   $(document).ready(function(){
+       jQuery.ajaxSetup({ cache: true });
+ {% if SETTINGS.DP_HIGHLIGHTER %}
+ $.lazy_highlight = {
+   N : 50,
+   loading : -1,
+   loaded : 0,
+   styles : '/contrib/syntaxhighlighter/Styles/',
+   scripts : '/contrib/syntaxhighlighter/Scripts/',
+   flag : 0,
+   highlight : function () {
+     if(--this.N < 1) clearInterval( this.flag );
+     try {
+       if(dp && dp.SyntaxHighlighter) {
+	 dp.SyntaxHighlighter.ClipboardSwf = this.scripts + 'clipboard.swf';
+	 dp.SyntaxHighlighter.HighlightAll('code');
+	 clearInterval( this.flag );
+       }
+     } catch (err) {}
+   },
+   add_stylesheet : function () {
+       $(document.createElement('link'))
+       .attr({type: 'text/css',
+	     href: this.styles + 'SyntaxHighlighter.css',
+	     rel: 'stylesheet',
+	     media: 'screen' })
+       .appendTo('head');
+   },
+   load_libs : function () {
+     console.log('ok');
+     $.lazy_highlight.loaded = 0;
+     $.each($.lazy_highlight.loading, function(i,e) {
+	 $.getScript($.lazy_highlight.scripts + e,
+		     $.lazy_highlight.load_notify) });
+   },
+   load_notify : function () {
+     if(++$.lazy_highlight.loaded == $.lazy_highlight.loading.length)
+       if(!$.lazy_highlight.flag)
+	 $.lazy_highlight.flag = setInterval("$.lazy_highlight.highlight()",250);
+   },
+   run : function (nodes) {
+     var brushMap = {
+       python: 'shBrushPython.js',
+       py: 'shBrushPython.js',
+       xml: 'shBrushXml.js',
+       xhtml: 'shBrushXml.js',
+       xslt: 'shBrushXml.js',
+       html: 'shBrushXml.js',
+       xhtml: 'shBrushXml.js',
+       js: 'shBrushJScript.js',
+       jscript: 'shBrushJScript.js',
+       javascript: 'shBrushJScript.js'
+     };
+     var scripts = ['shCore.js'];
+     var libs = {}
+     nodes.each(function(i,e) {
+	 conf = $(e).attr("class");
+	 if(conf) {
+	   $.each(conf.split(':'), function (i,lib) {
+	       if(brushMap[lib])
+		 libs[brushMap[lib]] = 1;
+	     });
+	 }
+       });
+     $.each(libs, function(k,v) { scripts.push(k); });
+     this.loading = scripts;
+     this.load_libs();
+   }
+ };
+   var pre_code = $("[name=code]");
+   if(pre_code.length) {
+     $.lazy_highlight.add_stylesheet();
+     $.lazy_highlight.run(pre_code);
+   }
+ {% endif %}
+ {% if SETTINGS.GOOG_ANALYTICS %}
+        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+        $.getScript(gaJsHost + "google-analytics.com/ga.js", function() {
+            try {
+                var pageTracker = _gat._getTracker("{{ SETTINGS.GOOG_ANALYTICS }}");
+                pageTracker._trackPageview();
+            } catch(err) {alert("failed to start tracking!");}
+        });
+{% endif %}
+{% if SETTINGS.DISQUS_FORUM %}
+        if($("#disqus_thread").length) {
+            var head = document.getElementsByTagName('head')[0];
+            $(document.createElement('link'))
+                .attr({type: 'text/css', href: '/media/css/disqus.css', rel: 'stylesheet', media: 'screen'})
+                .appendTo('head'); 
+            $.getScript('/contrib/js/disqus.embed.js');
+        }
+{% endif %}
+
+{% if SETTINGS.ADD_TO_ANY.add %}
+    $.getScript('http://static.addtoany.com/menu/page.js', function() {
+        a2a_linkname=document.title;
+        a2a_linkurl=location.href;
+        a2a_onclick=1;
+        a2a_init('page');
+    });
+{% endif %}
+{% if SETTINGS.ADD_TO_ANY.subscribe %}
+    $.getScript('http://static.addtoany.com/menu/feed.js', function() {
+        a2a_linkname=document.title;
+        a2a_linkurl="http://feeds.feedburner.com/journal-ma";
+        a2a_onclick=1;
+        a2a_init('feed');
+    });
+{% endif %}
+    });
+    </script>
+</body>
+</html>

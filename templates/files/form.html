@@ -1,0 +1,59 @@
+{# -*- coding: utf-8 -*- #}
+{% extends 'admin.html' %}
+{% block content %}
+<!-- content -->
+<h1>{% if mode and mode == 'edit' %}Edit{% else %}Add{% endif %} {% if form.file %}File{% else %}Folder{% endif %}</h1>
+
+<form action="." method="post" enctype="multipart/form-data">
+  <div id="tabs">
+	<ul class="ui-tabs-nav">
+	  <li><a href="#tab-{{ form.name.label.text|slugify }}">{{ form.name.label.text }}</a></li>
+	  <li><a href="#tab-metadata">Metadata</a></li>
+	</ul>
+	<div id="tab-{{ form.name.label.text|slugify }}" class="ui-tabs-panel">
+	  <ul>
+		<li>{{ form.name(class='textbox') }}</li>
+		<li>
+		{% if not file %}
+		{% if form.file %}
+		{{ form.file.label }}
+		{{ form.file(class='filebox') }}
+		{% endif %}
+		{% endif %}
+		</li>
+	  </ul>
+	</div>
+	<div id="tab-metadata" class="ui-tabs-panel">
+	  <ul class="ui-helper-clearfix">
+		<li class="short">{{ form.slug.label }}{{ form.slug(class='textbox') }}</li>
+		<li class="short">{{ form.breadcrumb.label }}{{ form.breadcrumb(class='textbox') }}</li>
+		{% if form.keywords -%}
+		<li>{{ form.keywords.label }}{{ form.keywords(class='textbox') }}</li>
+		{%- endif %}
+		{% if form.description -%}
+		<li>{{ form.description.label }}{{ form.description(class='textarea') }}</li>
+		{%- endif %}
+	  </ul>
+	</div>
+  </div> {# end div tabs #}
+  <div class="row ui-helper-clearfix">
+    <p style="float: right">{{ form.active }} {{ form.active.label }}</p>
+      <p>{{ form.state.label }} {{ form.state }}</p>
+	  {% if form.layout -%}
+	  <p>{{ form.layout.label }} {{ form.layout }}</p>
+	  {%- endif %}
+	  {% if form.content_type -%}
+	  <p>{{ form.content_type.label }} {{ form.content_type }}</p>
+	  {%- endif %}
+    </div>
+	{% if file %}
+	<p class="edit-info"><small>Last updated by {{ file.author }} on {{ file.updated|date('%D %H:%M') }}</small></p>
+	{% endif %}
+  <p class="buttons">
+    {{ form.save(class='button') }}
+    {{ form.cont(class='button') }}
+    or <a href="/admin/pages">Cancel</a>
+  </p>
+</form>
+<!-- end content -->
+{% endblock %}

@@ -1,0 +1,22 @@
+{# -*- coding: utf-8 -*- #}
+{% extends 'admin.html' %}
+
+{% block content %}
+<!-- content -->
+<h1>Delete Layout</h1>
+<form action="." method="post">
+<div class="form-area">
+Do you really want to delte this Layout:
+  <div id="meta-pages" class="pages">
+  <div id="div-title" class="title" title="Page Title">
+	{{ layout.name }}
+  </div>
+  </div> 
+  </div>
+  <p class="buttons">
+    {{ form.drop(class='button') }}
+    or <a href="/admin/layouts/">Cancel</a>
+  </p>
+</form>
+<!-- end content -->
+{% endblock %}

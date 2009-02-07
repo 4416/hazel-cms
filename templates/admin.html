@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+{% macro fff(img) -%}
+  <img src="{{ url_for("famfamfam/get", img + ".png") }}"/>
+{%- endmacro %}
+
+{% macro link(endpoint, label=None) -%}
+  <a href="{{ url_for(endpoint, **kwargs) }}">{{ label }}</a>
+{%- endmacro %}
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <title>Dragon CMS - Page</title>
+    <link href="/media/stylesheets/dragon.css" media="screen" rel="Stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div id="header">
+      <a href="/admin/" class="title">Dragon CMS</a>
+	  <ul class="ui-tabs-nav ui-helper-clearfix">
+		{% for endpoint, label in (('admin/pages/list','Pages'), ('admin/layouts/list', 'Layouts'), ('admin/files/list', 'Files'), ('admin/articles/list', 'Articles'), ('admin/cache/list', 'Cache')) -%}
+		<li{% if request().path.startswith(url_for(endpoint)) %} class="ui-tabs-selected"{% endif %}>{{ link(endpoint, label) }}</li>
+		{%- endfor -%}
+		<li style="float:right"><a href="/admin/settings">Administration</a></li>
+	  </ul>
+    </div>
+	<div id="main">
+  	  <div id="content">
+	  {% block content %} {% endblock %}
+	  </div>
+	  <div id="sidebar">
+		<!-- sidebar -->&nbsp;<!-- end sidebar -->
+	  </div>
+    </div>
+    <hr class="hidden" />
+    <div id="footer">
+      <p><a href="http://www.dragon-cms.com/">Dragon CMS</a> 0.1</p>
+      <p id="site-links">
+        You are currently logged in as <em>{{ google_users.get_current_user() }}</em>
+        <span class="separator"> | </span>
+        <a href="{{ google_users.create_logout_url(url_for('admin/index')) }}">Log Out</a>
+        <span class="separator"> | </span>
+        {{ link("articles/index", "View Site") }}
+      </p>
+    </div>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.1/jquery.min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="/contrib/jquery.ui/ui.core.packed.js"></script>
+	<script type="text/javascript" src="/contrib/jquery.ui/ui.tabs.packed.js"></script>
+	<script type="text/javascript">
+	$(function() {
+		$("#tabs").tabs();
+	    $("#tabs-2").tabs();
+	});
+	</script>
+  </body>
+</html>

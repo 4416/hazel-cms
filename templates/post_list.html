@@ -1,0 +1,40 @@
+{# -*- coding: utf-8 -*- #}
+{% extends 'base.html' %}
+{% block title_ext %} Archive | {% endblock %}
+{% block body %}
+{% if tag %}
+<h1>Entries on <em>{{ tag }}</em></h1>
+{% else %}
+<h1>Looking at the past</h1>
+{% endif %}
+{% if not posts %}
+The past is empty. No entries have ever been created.
+{% endif %}
+<ul>
+  {% for post in posts %}
+  <li>
+  <p><a href="/{{ post.lookup }}">{{ post.title|amp|typogrify }}</a> <em>{{ post.pub_date|date("%a %b %d %Y") }}</em></p><br />
+    <blockquote>
+  <div style="color: grey;padding-left:2em">
+  <span
+  style="color:#a0a;margin-left:-1em;font-weight:bold">//</span>
+  {{ post.html|striptags|truncatewords(25) }}
+  </div>
+  </blockquote>
+  <p style="text-align:right;clear:both">
+  by <span style="color:#933">{{ post.author.fullname() }}</span> on {% for topic in post.topics %}
+  <a href="/topic/{{ topic }}">{{ topic }}</a>{% if not loop.last %}, {% endif %}
+  {% endfor %}
+    </p>
+  </li>
+  {% endfor %}
+</ul>
+      {% if prev %}
+      {% set f = posts|first %}
+      &larr; <a href="?bookmark=-{{ f.sort_key }}">previous</a>
+      {% endif %}
+      {% if next %}
+      {% set l = posts|last %}
+      <a href="?bookmark={{ l.sort_key }}">next</a> &rarr;
+      {% endif %}
+{% endblock %}

@@ -1,0 +1,34 @@
+{# -*- coding: utf-8 -*- #}
+{% extends 'admin.html' %}
+{% block title_ext %}Memcache Stats | {% endblock %}
+{% block content %}
+{% set cache = memcache %}
+<h1>Cache</h1>
+<div id="list">
+  <div id="list-header">
+    <div>Statistics</div>
+    </div>
+<ul>
+  {% set base = cache.hits + cache.misses %}
+  <li> Hit ratio:
+  {% if base > 0 %}{{ (100 * cache.hits / base)|int }}{% else %}0{%endif%}% ({{
+  cache.hits }} hits and {{ cache.misses }} misses)
+  </li>
+  <li>Size of cache: {{ cache['items'] }} items, {{ cache.bytes }}
+  bytes</li>
+  <li>
+  {% if cache['items'] > 0 %}
+{% set seconds = (cache.oldest_item_age % 60 )|int %}
+{% set minutes = (cache.oldest_item_age % 3600 / 60)|int  %}
+{% set hours = (cache.oldest_item_age / 3600 )|int %}
+Cache contains items up to
+{% if hours > 0 %}{{ hours }} hours and{% endif %}
+{% if minutes > 0 %}{{ minutes }} minutes{% endif %} old.
+  {% else %}
+  Cache contains no items.
+  {% endif %}
+  </li>
+</ul>
+<a href="?flush=true">clear cache</a>
+</div>
+{% endblock %}

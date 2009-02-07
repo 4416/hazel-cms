@@ -1,0 +1,447 @@
+/* @override http://localhost:8086/media/stylesheets/dragon.css */
+
+body {
+	background-color: #e5e5e5;
+	font-family: "Lucida Grande","Bitstream Vera Sans",Helvetica,Verdana,Arial,sans-serif;
+	padding: 0;
+	margin: 0
+}
+
+ul, li {
+	padding: 0;
+	margin: 0;
+}
+
+h1 {
+	background-color: #333333;
+	color: #ffffff;
+	font-size: 1.5em;
+	padding: 10px 20px;
+	margin: 0;
+	font-weight: normal;
+}
+
+img {
+	 border: 0;
+	 padding: 0;
+	 margin: 0;
+}
+
+hr.hidden {
+	height: 1px;
+	visibility: hidden;
+}
+
+div#sidebar {
+	height: 0px;
+}
+
+#footer p {
+	font-size: .7em;
+	padding: 0 20px;
+}
+
+#header {
+	background-color: #242424;
+	color: #fff;
+}
+#header a {
+	text-decoration:none;
+	color: #ffffff;
+}
+#header a:hover, #header a:visited:hover {
+	text-decoration: underline;
+}
+
+#header .ui-tabs-nav {
+	padding-left: 20px;
+	padding-right: 17px;
+}
+
+#header .ui-tabs-nav a,
+#header .ui-tabs-nav a:link,
+#header .ui-tabs-nav a:visited {
+	background-color: #323232;
+	border-color: #454545;
+	color: #eeeeee;
+	text-decoration: none;
+}
+
+#content {
+	margin: 12px;
+	padding-top: 0px;
+	background-color: #ddd;
+	border-bottom: 2px solid #c7c7c7;
+}
+
+#site-links {
+	position: absolute;
+	right: 20px;
+	top: 20px;
+	margin:0;
+	padding:0;
+	color: #888888;
+	font-size: 11px
+}
+
+#site-links a:link, #site-links a:active, #site-links a:visited {
+	color: #e5e5e5;
+	text-decoration: none;
+}
+
+#site-links a:hover {
+	text-decoration: underline;
+}
+
+#site-links em {
+	color: #e5e5e5;
+	font-variant: small-caps;
+	font-weight: lighter;
+	font-style: normal;
+}
+
+a.title {
+	display: inline-block;	
+	margin-left:20px;
+	padding-top:20px;
+	padding-bottom: 20px;
+	font-size: 1.5em;
+	font-weight: bold;
+}
+
+p.buttons {
+	margin: 0;
+	margin-bottom-top: 10px;
+	padding: 20px 20px;
+	background-color: #fff;
+	font-size: 11px;
+}
+
+p.buttons input {
+	font-size: 2em;
+}
+
+p.buttons a {
+	color: #445577;
+}
+
+.ui-tabs, .row {
+	padding:20px 20px 10px 20px;
+}
+
+.ui-tabs-nav {
+	position: relative
+}
+
+/* Layout helpers from jQuery
+----------------------------------*/
+.ui-helper-hidden {
+	display: none;
+}
+
+.ui-helper-hidden-accessible {
+	position: absolute;
+	left: -99999999px;
+}
+
+.ui-helper-reset {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	line-height: 1.3;
+	text-decoration: none;
+	font-size: 100%;
+	list-style: none;
+}
+
+.ui-helper-clearfix:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+
+.ui-helper-clearfix {
+	display: inline-block;
+}
+
+/* required comment for clearfix to work in Opera \*/
+
+* html .ui-helper-clearfix {
+	height: 1%;
+}
+
+.ui-helper-clearfix {
+	display: block;
+}
+
+/* end clearfix */
+
+.ui-tabs-nav li {
+	float: left;
+	margin-right: 3px;
+	list-style-type: none;
+}
+
+.ui-tabs-hide {
+	display: none !important
+}
+
+.ui-tabs-nav a:link,
+.ui-tabs-nav a:active,
+.ui-tabs-nav a:hover,
+.ui-tabs-nav a:visited,
+.ui-tabs span.fake {
+	font-size: 14px;
+	line-height: 16px;
+	text-decoration: none;
+	color: #242424;
+	font-weight: bold;
+	display: block;
+	padding: 6px 8px 5px;
+}
+
+#header .ui-tabs-nav a:hover {
+	color: #242424;
+	background-color: #999999;
+}
+
+.ui-state-hover a {
+	background-color: #333333;
+	color: #ffffff !important;
+}
+
+#header .ui-tabs-selected a 
+{
+	background-color: #e5e5e5 !important;
+	color: #242424 !important;
+}
+
+input.textbox {
+	font-family: Georgia,Palatino,"Times New Roman",Times,serif;
+	width: 100%;		
+	border: 1px solid #ccc;
+}
+.ui-tabs-panel .textbox {
+	font-size: 2em;	
+}
+
+div.article-node a{
+	background: url(/famfamfam/page_white_text.png) no-repeat 0;
+	padding-left: 20px;
+}
+
+#list ul div.next a:hover,
+#list ul div.prev a:hover {
+	opacity: 1.0
+}
+#list ul div.next a {
+	background: url(/famfamfam/arrow_down.png) no-repeat 0;
+}
+#list ul div.prev a {
+	background: url(/famfamfam/arrow_up.png) no-repeat 0;
+}
+
+
+#tab-metadata .textbox {
+	font-size: 1.2em;
+}
+
+#tab-metadata li {
+	padding-bottom: .5em;
+}
+
+.ui-tabs-panel ul {
+	list-style-type: none;	
+}
+
+#tab-metadata li.short {
+	width: 50%;
+	float: left;
+}
+
+#list div.gif-ext, #list div.jpg-ext {
+	background: url(/famfamfam/image.png) no-repeat 0 .3em;
+	padding-left: 1.2em
+}
+#list div.css-ext {
+	background: url(/famfamfam/style.png) no-repeat 0 .3em;
+	padding-left: 1.2em;
+}
+
+#tab-metadata .textarea {
+	height: 2.6em;
+}
+li label {
+	font-weight: bold;
+	display:block;
+}
+li input {
+	padding: 3px 0;	
+}
+li.short input {
+	width: 95%;
+}
+textarea.textarea {
+	border: 1px solid #ccc;
+	font-family: Monaco,"Courier New",Courier,monospace;
+	height: 280px;
+	width: 100%;
+	padding: 3px 0;
+	font-size: 1.1em;
+}
+
+.ui-tabs-selected a, .ui-tabs-selected span.fake {
+	background-color: #ffffff;
+	color: inherit !important;
+}
+
+.ui-tabs-panel {
+	background-color: #ffffff;
+	padding: 20px;
+	display: block;
+}
+
+.row p {
+	float: left;
+	margin: 0;
+	margin-right: 2em;
+}
+
+small {
+	font-size: .7em;
+}
+form {
+	padding: 0;
+	margin: 0;
+}
+
+#list {
+	background-color: #ffffff;
+	padding: 20px;
+}
+
+#list ul a {
+	text-decoration: none;
+	color: #000000;
+	overflow:hidden;
+}
+#list ul div {
+	position: relative;
+}
+#list a .title {
+	font-weight: bold;
+}
+#list a:hover .title {
+	text-decoration: underline;
+}
+
+#list ul {
+	list-style-type: none;
+}
+
+#list ul li {
+	font-size: 1em;
+}
+#list li div {
+	line-height: 1.5em
+}
+#list img {
+	vertical-align: middle;
+}
+
+#list-header {
+	background-color: #f5f5f5;
+	border-bottom: 1px solid #ccc;
+	font-weight: bold;
+	padding: 4px 1em;
+}
+
+.state, .owner, .modify, .updated, .link, .cache {
+	overflow: hidden;
+	white-space: nowrap;
+	float: right;
+	width: 7em;
+}
+
+.link {
+	 width: 3em;
+}
+
+.modify:after {
+	content: ".";
+	visibility:hidden;
+}
+
+#list > ul {
+	padding: 0 1em;
+	border-bottom: 1px solid #ccc;
+	margin-bottom: 1em
+}
+
+#list ul ul {
+	padding-left: 22px;	
+}
+
+div.folder-node a {
+	background: url(/famfamfam/folder.png) no-repeat 0;
+	padding-left: 1.2em;	
+}
+div.page-node a{
+		background: url(/famfamfam/page.png) no-repeat 0;
+		padding-left: 1.2em;
+}
+div.layout-node a {
+	background: url(/famfamfam/layout.png) no-repeat 0;
+	padding-left: 1.2em
+}
+
+div.link {
+	background: url(/famfamfam/application_double.png) no-repeat 0;
+	padding-left: 20px;
+}
+div.link a {
+	margin-left: -20px;
+	padding-left: 20px;
+}
+
+div.cache {
+	background: url(/famfamfam/information.png) no-repeat 0;
+	padding-left: 20px;
+	width: 3em;
+}
+
+#list li {
+	font-weight: light;
+}
+
+.modify > img {
+	opacity: 0.2;
+}
+
+.name a:hover {
+	text-decoration: underline !important;	
+}
+
+p.edit-info {
+	margin: 0;
+	padding: 8px 20px;
+}
+
+
+
+#list div.name {
+	overflow: hidden;
+	white-space: nowrap;
+	margin-left: -16px;
+	padding-left: 16px
+}
+#list ul div.next a, #list ul div.prev a {
+	margin-left: -16px;
+	padding-left: 16px;
+	float:left;
+	width:0;
+	opacity: 0.6;
+}

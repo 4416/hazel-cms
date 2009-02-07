@@ -1,0 +1,77 @@
+{# -*- coding: utf-8 -*- #}
+{% extends "base.html" %}
+{% block title_ext %}{{ post.title|smartypants }} ({{ post.pub_date|date("%a %b %d %Y") }}) | {% endblock %}
+{% block body %}
+{% set prev = post.prev() %}
+{% set next = post.next() %}
+{% if next or prev %}
+<hr style="border:0; border-bottom: 1px solid #ddd">
+<div id="post_nav" style="text-align:right">
+  {% if next %}
+  <span style="float:left;white-space:nowrap">&larr; <a href="/{{ next.lookup }}">{{ next.title|amp|smartypants }}</a></span>
+  {% endif %}
+  {% if prev %}
+  <span style="white-space:nowrap">
+  <a href="/{{ prev.lookup }}">{{ prev.title|amp|smartypants }}</a> &rarr;
+  </span>
+  {% endif %}
+</div>
+<hr style="border:0; border-bottom: 1px solid #ddd; clear:both">
+{% endif %}
+<br />
+<h1>{{ post.title|amp|smartypants }}</h1>
+<div class="meta">
+  {{ post.pub_date|date("%a %b %d %Y") }}, {{ post.city }}{% if post.city != post.country %} ({{ post.country }}){% endif %} — {{ post.author.fullname() }}
+  on {% for topic in post.topics %}
+    <a href="/topic/{{ topic }}">{{ topic }}</a>{% if not loop.last %}, {% endif %}
+    {% endfor %}
+</div>
+<div id="body" class="hyphenate">
+  {{ post.html }}
+</div>
+
+{% if SETTINGS.ADD_TO_ANY.add or SETTINGS.ADD_TO_ANY.subscribe %}
+<div style="text-align:right">
+  {% if SETTINGS.ADD_TO_ANY.add %}
+  <span style="float:left">
+  <a class="a2a_dd" href="http://www.addtoany.com/share_save"><img src="http://static.addtoany.com/buttons/share_save_171_16.gif" width="171" height="16" border="0" alt="Share/Save/Bookmark"/></a>
+  </span>
+  {% endif %}
+  {% if SETTINGS.ADD_TO_ANY.subscribe %}
+  {% if SETTINGS.FEEDBURNER_ID %}
+  <a class="a2a_dd" href="http://www.addtoany.com/subscribe?linkname=&amp;linkurl=http%3A%2F%2Ffeeds.feedburner.com%2F{{ SETTINGS.FEEDBURNER_ID }}">
+  {% else %}
+  <a class="a2a_dd" href="http://www.addtoany.com/subscribe?linkname=&amp;linkurl=http%3A%2F%2F{{ SETTINGS.ALLOWED_HOSTS[0] }}%2Ffeeds%2Fposts%2F">
+  {% endif %}
+  <img src="http://static.addtoany.com/buttons/subscribe_171_16.gif" width="171" height="16" border="0" alt="Subscribe"/></a>
+  {% endif %}
+</div>
+<hr style="clear:both; border:0" />
+{% endif %}
+
+{% if SETTINGS.GOOG_ADSENSE %}
+<!-- ADSENSE -->
+<hr style="border:0; border-bottom: 1px solid #ddd">
+<script type="text/javascript"><!--
+google_ad_client = "{{ SETTINGS.GOOG_ADSENSE.client }}";
+google_ad_slot   = "{{ SETTINGS.GOOG_ADSENSE.slot }}";
+google_ad_width  = {{ SETTINGS.GOOG_ADSENSE.width }};
+google_ad_height = {{ SETTINGS.GOOG_ADSENSE.height }};
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+<hr style="border:0; border-bottom: 1px solid #ddd; clear:both">
+<!-- ADSENSE END -->
+{% endif %}
+
+{% if SETTINGS.DISQUS_FORUM %}
+<!-- DISQUS -->
+<div>
+<div id="disqus_thread"></div>
+<noscript><a href="http://{{ SETTINGS.DISQUS_FORUM }}.disqus.com/?url=ref">View the discussion thread.</a></noscript><a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+<!-- DISQUS END -->
+{% endif %}
+{% endblock %}

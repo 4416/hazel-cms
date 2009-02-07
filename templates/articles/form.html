@@ -1,0 +1,49 @@
+{# -*- coding: utf-8 -*- #}
+{% extends 'admin.html' %}
+{% block content %}
+<!-- content -->
+<h1>{% if mode and mode == 'edit' %}Edit{% else %}Add{% endif %} an
+Article</h1>
+{% if post %}
+{% set action = url_for('admin/articles/edit', key=post.get_key()) %}
+{% else %}
+{% set action = url_for('admin/articles/add') %}
+{% endif %}
+<form action="{{ action }}" method="post">
+  <div id="tabs">
+	<ul class="ui-tabs-nav">
+	  <li><a href="#tab-{{ form.title.label.text|slugify }}">{{ form.title.label.text }}</a></li>
+	  <li><a href="#tab-metadata">Metadata</a></li>
+	</ul>
+	<div id="tab-{{ form.title.label.text|slugify }}" class="ui-tabs-panel"> {{ form.title(class='textbox') }}</div>
+	<div id="tab-metadata" class="ui-tabs-panel">
+	  <ul>
+		<li class="short">{{ form.city.label }}{{ form.city(class='textbox') }}</li>
+		<li class="short">{{ form.country.label }}{{ form.country(class='textbox') }}</li>
+		<li>{{ form.topics.label }}{{ form.topics(class='textbox') }}</li>
+	  </ul>
+	</div>
+  </div> {# end div tabs #}
+  <div class="ui-tabs">
+	<ul class="ui-tabs-nav ui-tabs-selected ui-helper-clearfix">
+	  <li><span class="fake">{{ form.body.label }}</span></a>
+	</ul>
+	<div class="ui-tabs-panel">{{ form.body(class='textarea',
+  style='width:100%') }}</div>
+  </div>
+  <div class="row ui-helper-clearfix">
+	<p style="float: right">{{ form.published }} {{
+  form.published.label }}</p>
+    <p>{{ form.pub_date.label }} {{ form.pub_date }}</p>
+  </div>
+  {% if layout %}
+  <p class="edit-info"><small>Last updated by {{ article.author }} on {{ article.modified|date('%D %H:%M') }}</small></p>
+  {% endif %}
+  <p class="buttons">
+    {{ form.save(class='button') }}
+    {{ form.cont(class='button') }}
+    or <a href="/admin/articles">Cancel</a>
+  </p>
+</form>
+<!-- end content -->
+{% endblock %}

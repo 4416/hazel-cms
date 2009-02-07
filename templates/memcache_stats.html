@@ -1,0 +1,13 @@
+{# -*- coding: utf-8 -*- #}
+{% extends 'base.html' %}
+{% block title_ext %}Memcache Stats | {% endblock %}
+{% block body %}
+{% set items = memcache.items() %}
+<table>
+  <tr><td>Key</td><td>Value</td></tr>
+  {% for k,v in items %}
+  <tr><td>{{ k }}</td><td>{{ v }}</td></tr>
+  {% endfor %}
+</table>
+<a href="/admin/memcache/flush">clear cache</a>
+{% endblock %}

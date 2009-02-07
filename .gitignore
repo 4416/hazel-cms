@@ -1,0 +1,5 @@
+*.pyc
+*.swp
+.svn
+app.yaml
+usersettings.py

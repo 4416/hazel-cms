@@ -1,0 +1,37 @@
+{# -*- coding: utf-8 -*- #}
+{% extends 'base.html' %}
+
+{% block body %}
+
+{% if status %}
+<strong>{{ status }}</strong>
+
+{% if status == 'error' %}{{ msg }}
+{% elif post.published %}<a href="/{{ post.lookup }}">view</a>
+{% endif %}
+
+{% endif %}
+
+{% if post %}
+<h1>Edit <em>{{ post.title|amp|smartypants }}</em></h1>
+{% else %}
+<h1>Create new article</h1>
+{% endif %}
+
+{% if post %}
+<form id="admin-post" action="/admin/edit/{{ post.get_key_name() }}" method="post">
+{% else %}
+<form id="admin-post" action="" method="post">
+{% endif %}
+
+{% for field in form %}
+<p>{{ field.label }}{{ field }}</p>
+{% endfor %}
+
+{% if post %}
+<input type="submit" name="modify" value="Modify">
+{% else %}
+<input type="submit" name="create" value="Create">
+{% endif %}
+</from>
+{% endblock %}

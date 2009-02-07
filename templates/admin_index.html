@@ -1,0 +1,51 @@
+{# -*- coding: utf-8 -*- #}
+{% extends 'base.html' %}
+{% macro list(prefix, prev, entities, next) %}
+{% if prev %}
+{% set f = entities|first %}
+<tr><td colspan="3"><p>&uarr; <a href="?{{ prefix }}_bookmark=-{{
+  f.sort_key }}">later</a></p></td></tr>
+  {% endif %}
+  {% for entity in entities %}
+  <tr>
+    <td class="nobr"><em>{{ entity.pub_date|date('%y-%m-%d %H:%M') }}</em></td>
+    <td>{{ entity.title|smartypants }}</td>
+    <td class="nobr">
+      <a href="/{{ entity.get_key_name() }}">view</a>
+      <a href="/admin/edit/{{ entity.get_key_name() }}">edit</a>
+      <a href="/admin/delete/{{ entity.get_key_name() }}">delete</a>
+    </td>
+  </tr>
+  {% endfor %}
+  {% if next %}
+  {% set l = entities|last %}
+  <tr><td colspan="3"><p>&darr; <a href="?{{ prefix }}_bookmark={{ l.sort_key }}">earlier</a></p></td></tr>
+  {% endif %}
+{% endmacro %}
+
+{% block body %}
+{% if unpublished %}
+<h1>Unpublished Articles</h1>
+<table>
+  <tr><th>Created</th><th>Title</th></tr>
+  {{ list('unp', unpublished_prev, unpublished, unpublished_next) }}
+</table>
+{% endif %}
+{% if upcoming %}
+<h1>Upcoming Articles</h1>
+<table>
+  <tr><td>Pub Date</td><td>Title</td></tr>
+  {{ list('upc', upcoming_prev, upcoming, upcoming_next) }}
+</table>
+{% endif %}
+<h1>Published Articles</h1>
+{% if published %}
+<table>
+  <tr><th>Published</th><th>Title</th><th></th></tr>
+  {{ list('pub', published_prev, published, published_next) }}
+</table>
+{% else %}
+There are none...
+{% endif %}
+You can <a href="/admin/create/">create</a> a new one.
+{% endblock %}

@@ -1,0 +1,34 @@
+{# -*- coding: utf-8 -*- #}
+{% extends 'admin.html' %}
+{% block content %}
+<!-- content -->
+<h1>{% if mode and mode == 'edit' %}Edit{% else %}Add{% endif %} Layout</h1>
+
+<form action="." method="post">
+  <div class="ui-tabs">
+	<ul class="ui-tabs-nav ui-tabs-selected ui-helper-clearfix">
+	  <li><span class="fake">{{ form.name.label }}</span></li>
+	</ul>
+	<div class="ui-tabs-panel">{{ form.name(class='textbox') }}</div>
+  </div>
+  <div class="ui-tabs">
+	<ul class="ui-tabs-nav ui-tabs-selected ui-helper-clearfix">
+	  <li><span class="fake">{{ form.body.label }}</span></a>
+	</ul>
+	<div class="ui-tabs-panel">{{ form.body(class='textarea',
+  style='width:100%') }}</div>
+  </div>
+  <div class="row ui-helper-clearfix">
+	<p style="float: right">{{ form.active }} {{ form.active.label }}</p>
+  </div>
+  {% if layout %}
+  <p class="edit-info"><small>Last updated by {{ layout.author }} on {{ layout.updated|date('%D %H:%M') }}</small></p>
+  {% endif %}
+  <p class="buttons">
+    {{ form.save(class='button') }}
+    {{ form.cont(class='button') }}
+    or <a href="/admin/layouts/">Cancel</a>
+  </p>
+</form>
+<!-- end content -->
+{% endblock %}

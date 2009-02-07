@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block body %}
+<h1>Delete article: {{ post.title }}</h1>
+<blockquote><span
+style="color:#a0a;padding-left:1em;padding-right:0.5em;font-weight:bold">//</span><span
+style="color:grey">{{ post.body }}</span></blockquote>
+<p>
+Do you really want to delete this entry?
+<form action="" method="post">
+  <a href="$absolute url">No, cancel</a> or <input type="submit" name="delete" value="Yes, delete this entry!">
+</form>
+</p>
+
+{% endblock %}

@@ -1,0 +1,77 @@
+{# -*- coding: utf-8 -*- #}
+{% extends 'admin.html' %}
+
+{% macro fff(img) -%}
+  <img src="{{ url_for('famfamfam/get', file=img + ".png") }}" />
+{%- endmacro %}
+
+{% set del = fff("delete") %}
+{% set delete = "admin/articles/delete" %}
+{% set edit = "admin/articles/edit" %}
+
+{% macro simple_list(items, p, n, id=None) %}
+  <ul{% if id %} id="{{ id }}"{% endif %}>
+  {% for item in items %}
+    <li>
+  <div class="state">{{ item.get_state() }}</div>
+  <div class="owner"><small>{{ item.author }}</small></div>
+  <div class="updated"><small>{{ item.modified|date("%D %H:%M") }}</small></div>
+  <div class="modify">{{ link(delete, del, key=item.get_key())
+  }}</div>
+  <div class="link"><small><a class="simple" href="{{
+  item.get_absolute_url() }}" target="_blank">view</a></small></div>
+  {% if item.is_cached() -%}
+  <div class="cache"><small>Cached</small></div>
+  {%- endif %}
+  <div class="name article-node ui-helper-clearfix">
+    {% if p and loop.first -%}<div class="prev">{{ p }}</div>
+    {%- elif n and loop.last -%}<div class="next">{{ n }}</div>
+    {%- endif %}{{ link(edit, item.title|smartypants, key=item.get_key()) }}
+  </div>
+  </li>
+  {% endfor %}
+  </ul>
+{% endmacro %}
+
+{% macro build_block(title, items, prev, next, list) %}
+  <h3>{{ title }}</h3>
+  <div id="list-header">
+	<div class="state">State</div>
+	<div class="owner">Owner</div>
+	<div class="updated">Updated</div>
+    <div class="modify">Modify</div>
+	<div>Title</div>
+  </div>
+  {% set p, n = None, None %}
+  {% if prev and items|first %}
+  {% set f = items|first %}
+  {% set p = link('admin/articles/list', 'prev', list=list, bookmark='-' + f.sort_key) %}
+  {% endif %}
+  {% if next and items|last %}
+  {% set l = items|last %}
+  {% set n = link('admin/articles/list', 'next', list=list, bookmark=l.sort_key) %}
+  {% endif %}
+  {{ simple_list(items, p, n) }}
+{% endmacro %}
+
+  
+{% block content %}
+<h1>Articles</h1>
+<div id="list">
+  {% if unpublished %}
+  {{ build_block('Unpublished', unpublished, unpublished_prev,
+                 unpublished_next, 'unpublished') }}
+  {% endif %}
+  {% if upcoming %}
+  {{ build_block('Upcoming', upcoming, upcoming_prev,
+                 upcoming_next, 'upcoming') }}
+  {% endif %}
+  {% if published %}
+  {{ build_block('Published', published, published_prev,
+                 published_next, 'published') }}
+  {% endif %}
+
+
+Add a {{ link('admin/articles/add','new Article') }}.
+</div>
+{% endblock %}

@@ -1,0 +1,87 @@
+/* reset */
+* { margin: 0; padding: 0; }
+
+html, body { height: 100%; }
+
+body {
+  background-color: white;
+  font: 13.34px helvetica, arial, clean, sans-serif;
+  *font-size: small;
+  text-align: center;
+}
+
+h1, h2, h3, h4, h5, h6 { font-size: 100%; }
+h1, div#dsq-content h3, h3.huge
+{ margin-bottom: .25em; font-size: 3em; line-height: 1em; font-family: "Goudy Old Style",Garamond,Georgia,Times,serif; font-weight: normal !important; text-align:left }
+ul { margin-left: 0; padding-left: 2em; }
+p { margin: 1em 0; font-family: Geneva,"Lucida Sans Unicode",Helvetica,Arial,sans-serif}
+a { color: #00a; }
+a:hover { color: black; }
+a:visited { color: #a0a; }
+
+a img { border: 0 }
+
+table { font-size: inherit; font: 100%; }
+
+#home ul { list-style-type: none; }
+
+#home ul span { color: #aaa; }
+
+.site {
+  font-size: 1.3em;
+  text-align: justify;
+  width: 40em;
+  margin: 3em auto 2em auto;
+  line-height: 1.5em;
+}
+
+.title {
+  color: #a00;
+  font-weight: bold;
+  margin-bottom: 2em;
+}
+
+.header {}
+
+  .site .title a, .header a {
+    color: #aaa;
+    text-decoration: none;
+    margin-left: 1em;
+  }
+
+  .site .title a:hover, .header a:hover {
+    color: black;
+  }
+
+.meta a {
+    color: #aaa;
+    text-decoration: none;
+    border-bottom: 1px dotted #ccc;
+}
+.meta a:hover { color: #933 }
+
+.site .meta { color: #aaa; font-size: .8em; text-align:left }
+
+p label { display: block }
+p input, p textarea { width: 100%; padding: .5em; border: thin solid grey }
+
+/* flickr image styling */
+.flickr { padding:1em; border-left: thin solid #eaeaea; border-top: thin solid #eaeaea; border-right: thin solid #cecece; border-bottom: thin solid #cecece; display:inline-block; text-align:right }
+.flickr img { display:block}
+.flickr em { font-family: verdana, sans-serif; font-size: 14px; display: inline-block; padding-right: 1em;padding-top:.5em; color: #aaa}
+.flickr em a { color: #888 !important; text-decoration:none }
+.flickr a img { display: inline; vertical-align: text-bottom}
+
+h1 .amp, h2 .amp, h3 .amp, h4 .amp, h5 .amp, h6 .amp {
+  font-style: italic;
+  font-family: "Goudy Old Style", "Palatino", "Book Antiqua", Times, serif;
+}
+p em, p strong, .nobr em { background-color:#FFFAC9; }
+p em, .nobr em { font-style:normal; }
+
+.nobr { white-space:nowrap }
+
+.site p a { text-decoration: none; border-bottom: 1px dotted #ccc; color: #933 }
+
+#admin-post textarea { height: 200px }
+td p { margin: 0; padding-left: 1em }
