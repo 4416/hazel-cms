@@ -40,7 +40,7 @@ class Post(db.Model):
 
     @classmethod
     def _rs(cls):
-        return cls.all().order('sort_key')        
+        return cls.all().order('sort_key')
 
     @classmethod
     def _pub(cls):

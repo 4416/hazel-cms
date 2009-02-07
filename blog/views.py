@@ -8,4 +8,3 @@ def index(request):
     if latest is not None:
         return redirect(latest.get_absolute_url())
     return render_template('show_post.html')
-

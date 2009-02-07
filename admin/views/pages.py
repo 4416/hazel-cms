@@ -94,7 +94,7 @@ def add(request, to=None):
         for name, block in blocks:
             info(name)
             info(block.errors)
-            
+
     return render_template('pages/form.html', form=form, add=add, blocks=blocks)
 
 def edit(request, key):
@@ -128,7 +128,7 @@ def edit(request, key):
                     form.layout.data = None
                 else:
                     form.layout.data = Layout.get(form.layout.data.split(':',1)[1])
-                info(form.layout.data)                
+                info(form.layout.data)
                 for block in node.blocks:
                     blocks[block.name].auto_populate(block)
                     keys.remove(block.name)
@@ -140,7 +140,7 @@ def edit(request, key):
             node.put()
             # invalidate cache
             node.invalidate_cache()
-            
+
             if form.save.data is True:
                 return redirect('/admin/pages/', 301)
             if layout_val is not None:
@@ -165,7 +165,7 @@ def delete(request, key):
             Node.drop(key, cascade=True)
             # FIXME: remove blocks from dropped Nodes
             return redirect('/admin/pages/', 301)
-        
+
     node = Node.get(key)
     nodes = dict([(n.get_key(), n) for n in Node.all().filter("ancestors = ", key)])
     node = rec(node, nodes)
@@ -174,7 +174,7 @@ def delete(request, key):
 
 def add_folder(request):
     form = FolderForm(request.form)
-    if request.method == 'POST' and form.validate():    
+    if request.method == 'POST' and form.validate():
         name = form.name.data
         slug = form.slug.data
         breadcrumb = form.breadcrumb.data
@@ -192,7 +192,7 @@ def add_folder(request):
         if form.save.data is True:
             return redirect('/admin/pages/', 301)
         if form.cont.data is True:
-            return redirect('/admin/pages/edit/%s' % page.get_key(), 301)            
+            return redirect('/admin/pages/edit/%s' % page.get_key(), 301)
     return render_template('pages/form.html', form=form)
 
 def move(request, A, mode, B):
@@ -203,4 +203,3 @@ def move(request, A, mode, B):
     switch[mode](A,B)
     info("Done")
     return redirect('/admin/pages/', 301)
-

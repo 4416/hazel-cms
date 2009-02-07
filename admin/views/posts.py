@@ -36,7 +36,7 @@ def prepare(form):
     if data['published']:
         key_name = u'Published:%s' % data['lookup']
     else:
-        key_name = u'Post:%s' % data['lookup']    
+        key_name = u'Post:%s' % data['lookup']
     return key_name, data
 
 class PostProxy(object):
@@ -117,7 +117,7 @@ def index(request):
                                                   .filter('sort_key <', bm),
                                    lambda bm: Post.runpub()\
                                                   .filter('sort_key >', bm),
-                                   bookmark=unp_bm)    
+                                   bookmark=unp_bm)
     return render_template('admin_index.html',
                            unpublished_prev = unp_prev,
                            unpublished      = unp,
@@ -209,4 +209,3 @@ def migrate(request, model):
 ################################################################################
 # The Wiki Engine
 ################################################################################
-

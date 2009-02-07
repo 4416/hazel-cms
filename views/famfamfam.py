@@ -7,5 +7,5 @@ zf = ZipFile(join(abspath(dirname('__file__')), 'zip', 'famfamfam.zip'))
 
 @memcached
 def get(request, file):
-	data = zf.read(file)
-	return Response(data, mimetype=file_ext_to_content_type[file.rsplit('.',1)[1]])
+    data = zf.read(file)
+    return Response(data, mimetype=file_ext_to_content_type[file.rsplit('.',1)[1]])

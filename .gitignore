@@ -1,5 +1,6 @@
 *.pyc
 *.swp
+*.bak
 .svn
 app.yaml
 usersettings.py

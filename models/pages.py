@@ -25,10 +25,10 @@ class MethodMixin(object):
     def get_absolute_url(self, base=''):
         # FIXME: once the abs_path logic is fully implemented,
         #        this should be fixed accordingly
-		if self.abs_path != '':
-			return utils.url_for('pages/show', key=self.abs_path)
-		return utils.url_for('pages/show', key=self.slug)
-    
+        if self.abs_path != '':
+            return utils.url_for('pages/show', key=self.abs_path)
+        return utils.url_for('pages/show', key=self.slug)
+
     def is_cached(self):
         return not memcache.get(self.get_absolute_url()) == None
 
@@ -99,7 +99,7 @@ class File(SortedMPNode, MethodMixin):
 
     state = db.IntegerProperty(default=HIDDEN)
     active = db.BooleanProperty(default=False)
-    
+
     content_type = db.StringProperty()
     data = db.BlobProperty()
     size = db.IntegerProperty(default=0)

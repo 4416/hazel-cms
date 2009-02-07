@@ -32,7 +32,7 @@ class PageForm(FolderForm):
 class BlockAddForm(Form):
     name = TextField(u'Blockname')
     add = SubmitField(u'Add Block')
-    
+
 class BlockForm(Form):
     body = TextAreaField(u'Body')
 
@@ -51,7 +51,7 @@ class LayoutForm(Form):
 
 class ConfirmDeleteLayoutForm(Form):
     drop = SubmitField(u'Delete Layout')
-    
+
 class FileForm(FolderForm):
     name = TextField(u'Filename', [validators.length(min=1, max=25)])
     file = FileField(u'File')

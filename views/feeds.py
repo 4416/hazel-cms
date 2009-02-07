@@ -13,7 +13,7 @@ fid = FEED_INFO_DICT = {'author': { 'name':  ADMINS[0][0],
                         'subtitle': BLOG_SUBTITLE }
 
 class MyFeed(Feed):
-    
+
     def setup(self, qs, n):
         from datetime import datetime
         now = datetime.now()

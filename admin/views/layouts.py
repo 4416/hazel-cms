@@ -53,5 +53,5 @@ def delete(request, key):
     if request.method == "POST" and form.validate():
         if form.drop.data is True:
             layout.delete()
-            return redirect('/admin/layouts/', 301)            
+            return redirect('/admin/layouts/', 301)
     return render_template('layouts/confirm_delete.html', layout=layout, form=form)

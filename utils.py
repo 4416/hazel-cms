@@ -39,30 +39,30 @@ manager = LocalManager([local])
 ################################################################################
 # memcache decorator
 def memcached(fn):
-	def _fn(request, *args, **kwargs):
-		key = request.path
-		resp = memcache.get(key)
-		if resp is not None:
-			return resp
-		resp = fn(request, *args, **kwargs)
-        if resp.prevent_cache:
+    def _fn(request, *args, **kwargs):
+        key = request.path
+        resp = memcache.get(key)
+        if resp is not None:
             return resp
-		resp.expires = datetime.now() + timedelta(7)
-		memcache.add(key, resp)
-		return resp
-	return _fn
+        resp = fn(request, *args, **kwargs)
+    if resp.prevent_cache:
+        return resp
+            resp.expires = datetime.now() + timedelta(7)
+            memcache.add(key, resp)
+            return resp
+    return _fn
 
 ################################################################################
 # Globals
 ################################################################################
 file_ext_to_content_type = { 'jpg': 'image/jpeg',
-							 'gif': 'image/gif',
-							 'css': 'text/css',
-							 'txt': 'text/plain',
-							 'png': 'image/png',
-							 'xml': 'text/xml',
-							 'js' : 'application/x-javascript',
-							 'html': 'text/html' }
+                                                         'gif': 'image/gif',
+                                                         'css': 'text/css',
+                                                         'txt': 'text/plain',
+                                                         'png': 'image/png',
+                                                         'xml': 'text/xml',
+                                                         'js' : 'application/x-javascript',
+                                                         'html': 'text/html' }
 content_type_to_file_ext = dict([(v,k) for k,v in file_ext_to_content_type.items()])
 
 
@@ -89,23 +89,23 @@ jinja_env.globals['ct2fe'] = content_type_to_file_ext
 
 
 def menu(root='root'):
-	base = Node.all().filter('name = ', root).get()
-	qs = Node.all().filter('active = ', True).filter('state = ', PUBLISHED)
-	l = len(base.path)
-	nodes = dict([(n.get_key(), n) for n in qs if n.path.startswith(base.path)])
+    base = Node.all().filter('name = ', root).get()
+    qs = Node.all().filter('active = ', True).filter('state = ', PUBLISHED)
+    l = len(base.path)
+    nodes = dict([(n.get_key(), n) for n in qs if n.path.startswith(base.path)])
 
-	node = simple_rec(base, nodes)
-	info(node)
-	return node
+    node = simple_rec(base, nodes)
+    info(node)
+    return node
 
 ################################################################################
 # Layout renderer
 from models.pages import File
 def file_path(slug):
-	f = File.all().filter('slug = ', slug).get()
-	if f is None:
-		return u''
-	return u'/file/%s.%s' % (f.slug, content_type_to_file_ext[f.content_type])
+    f = File.all().filter('slug = ', slug).get()
+    if f is None:
+        return u''
+    return u'/file/%s.%s' % (f.slug, content_type_to_file_ext[f.content_type])
 
 
 layout_env = Environment(loader=LayoutLoader())
@@ -114,13 +114,13 @@ layout_env.globals['menu'] = menu
 
 
 def render_layout(layout, **context):
-	return layout_env.get_template(layout).render(**context)
+    return layout_env.get_template(layout).render(**context)
 
 def render_layout_from_string(string, **context):
-	return layout_env.from_string(string).render(**context)
+    return layout_env.from_string(string).render(**context)
 
 def layout_response_from_string(string, content_type='text/html', **context):
-	return Response(render_layout_from_string(string, **context), mimetype=content_type)
+    return Response(render_layout_from_string(string, **context), mimetype=content_type)
 ################################################################################
 
 from google.appengine.api import users
@@ -134,8 +134,8 @@ us.SNAIL_ADDRESS = us.AUTHOR_SNAIL
 jinja_env.globals['SETTINGS'] = us
 
 def layout_filter(fn):
-	layout_env.filters[fn.__name__] = fn
-	return fn
+    layout_env.filters[fn.__name__] = fn
+    return fn
 
 def jinja_filter(fn):
     jinja_env.filters[fn.__name__] = fn
@@ -248,11 +248,11 @@ def caps(text):
     except ImportError:
         info("Error in `caps` filter: The Python SmartyPants library isn't installed.")
         return text
-        
+
     tokens = smartypants._tokenize(text)
     result = []
-    in_skipped_tag = False    
-    
+    in_skipped_tag = False
+
     cap_finder = re.compile(r"""(
                             (\b[A-Z\d]*        # Group 2: Any amount of caps and digits
                             [A-Z]\d*[A-Z]      # A cap string much at least include two caps (but they can have digits between them)
@@ -276,8 +276,8 @@ def caps(text):
             return """<span class="caps">%s</span>%s""" % (caps, tail)
 
     tags_to_skip_regex = re.compile("<(/)?(?:pre|code|kbd|script|math)[^>]*>", re.IGNORECASE)
-    
-    
+
+
     for token in tokens:
         if token[0] == "tag":
             # Don't mess with tags.
@@ -300,19 +300,19 @@ def caps(text):
 @jinja_filter
 def initial_quotes(text):
     quote_finder = re.compile(r"""((<(p|h[1-6]|li|dt|dd)[^>]*>|^)              # start with an opening p, h1-6, li, dd, dt or the start of the string
-                                  \s*                                          # optional white space! 
+                                  \s*                                          # optional white space!
                                   (<(a|em|span|strong|i|b)[^>]*>\s*)*)         # optional opening inline tags, with more optional white space for each.
                                   (("|&ldquo;|&\#8220;)|('|&lsquo;|&\#8216;))  # Find me a quote! (only need to find the left quotes and the primes)
-                                                                               # double quotes are in group 7, singles in group 8 
+                                                                               # double quotes are in group 7, singles in group 8
                                   """, re.VERBOSE)
     def _quote_wrapper(matchobj):
-        if matchobj.group(7): 
+        if matchobj.group(7):
             classname = "dquo"
             quote = matchobj.group(7)
         else:
             classname = "quo"
             quote = matchobj.group(8)
-        return """%s<span class="%s">%s</span>""" % (matchobj.group(1), classname, quote) 
+        return """%s<span class="%s">%s</span>""" % (matchobj.group(1), classname, quote)
     output = quote_finder.sub(_quote_wrapper, text)
     return text
 
@@ -349,7 +349,7 @@ def widont(text):
     widont_finder = re.compile(r"""((?:</?(?:a|em|span|strong|i|b)[^>]*>)|[^<>\s]) # must be proceeded by an approved inline opening or closing tag or a nontag/nonspace
                                    \s+                                             # the space to replace
                                    ([^<>\s]+                                       # must be flollowed by non-tag non-space characters
-                                   \s*                                             # optional white space! 
+                                   \s*                                             # optional white space!
                                    (</(a|em|span|strong|i|b)>\s*)*                 # optional closing inline tags with optional white space after each
                                    ((</(p|h[1-6]|li|dt|dd)>)|$))                   # end with a closing p, h1-6, li or the end of the string
                                    """, re.VERBOSE)
