@@ -163,11 +163,13 @@ def edit(request, key):
             if not created:
                 return Response('sorry, post with that pub_date and title'\
                                     + 'exists already')
+            post.invalidate_cache()
             post.delete()
             post = entity
             status = 'Updated'
-            if form.save.data:
-                return redirect('/admin/articles/', 301)
+        post.invalidate_cache()
+        if form.save.data:
+            return redirect('/admin/articles/', 301)
     return render_template('articles/form.html', form=form, post=post, status=status)
 
 def delete(request, key):

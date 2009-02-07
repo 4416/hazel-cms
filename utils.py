@@ -16,6 +16,8 @@ from models.pages import Node, PUBLISHED
 
 from google.appengine.api import memcache
 
+from logging import info
+
 ################################################################################
 # Classes
 ################################################################################
@@ -46,7 +48,9 @@ def memcached(fn):
             return resp
         resp = fn(request, *args, **kwargs)
         if resp.prevent_cache:
+            info('Cacheprevention flag set for "%s"' % key)
             return resp
+        info('Caching "%s"' % key)
         resp.expires = datetime.now() + timedelta(7)
         memcache.add(key, resp)
         return resp

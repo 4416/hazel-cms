@@ -22,8 +22,9 @@ def show(request, key):
     if post:
         resp = render_template('show_post.html', post=post)
         resp.prevent_cache = prevent_cache
-    resp render_template('404.html', request=request)
-    resp.prevent_cache = True
+    else:
+        resp = render_template('404.html', request=request)
+        resp.prevent_cache = True
     return resp
 
 def topic(request, tag):

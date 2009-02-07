@@ -5,6 +5,7 @@ from google.appengine.api import users
 from google.appengine.api import memcache
 from datetime import datetime
 import utils
+from urllib2 import unquote
 
 class NonUniqueException(Exception):
     pass
@@ -114,17 +115,19 @@ class Post(db.Model):
     def get_key(self):
         return self.get_key_name()
 
-    def get_absolute_url(self):
+    def get_absolute_url(self, unquote_url=False):
         # ugly!
         key = self.get_key_name()
         if key.startswith('Published:'):
             key = key[10:]
-        return utils.url_for('articles/show', key=key)
+        if not unquote_url:
+            return utils.url_for('articles/show', key=key)
+        return unquote(utils.url_for('articles/show', key=key))
 
     def is_cached(self):
-        return not memcache.get(self.get_absolute_url()) == None
+        return memcache.get(self.get_absolute_url(unquote_url=True)) is not None
 
     def invalidate_cache(self):
         for i in range(2):
-            if memcache.delete(self.get_absolute_url()) > 0:
+            if memcache.delete(self.get_absolute_url(unquote_url=True)) > 0:
                 break
