@@ -127,7 +127,6 @@ class TreeTest(unittest.TestCase):
 
 
 class ModelPublicMethodsTest(TreeTest):
-
     def setUp(self):
         db.delete(Menu.all())
         insert(self.tree)
@@ -467,14 +466,3 @@ class ModelTest(TreeTest):
         Menu.remove(find('A'))
         expected = ((x,) for x in 'a,b,c,d,e,f,B,C,D,E,F'.split(','))
         self.assertEqualTree(expected)
-
-class DifferentClassTest(TreeTest):
-    def test_add_and_move(self):
-        db.delete(Layout.all())
-        cls = Node
-        db.delete(cls.all()) # wipe
-        cls.add(name='A')
-        cls.add(name='B')
-        cls.move(find('A',cls), after=find('B',cls))
-        expected = [[x,] for x in 'B,A'.split(',')]
-        self.assertEqualTree(expected,cls=cls)

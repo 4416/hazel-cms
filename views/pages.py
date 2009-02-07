@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 @memcached
 def show(request, key):
     # eventually the key should be the "abs_path"
-    page = Node.all().filter('type =', PAGE).filter('slug = ', key).get()
+    page = Node.all().filter('type =', PAGE).filter('abs_path = ', key).get()
     if page is None:
         raise Exception("Page not found")
     if page.layout is None:

@@ -41,11 +41,14 @@ def list_pages(request):
     return render_template('pages/list.html', root=root)
 
 def add(request, to=None):
+    """ add a new page
+        to the set"""
     blocks = []
     form = PageForm(request.form)
     add  = BlockAddForm(request.form, prefix='_add')
     form.layout.choices = [('Layout:None', '---')] + [(unicode(l), l.name) for l in Layout.all().order('name')]
     if request.method == 'POST':
+        # some logic to find __block elements.
         for key in request.form:
             if key.startswith('__block:'):
                 name = key.split('__',2)[1][6:]
@@ -137,7 +140,7 @@ def edit(request, key):
                     block = Block(node=node, name=block, body=blocks[block].body.data)
                     block.put()
             form.auto_populate(node)
-            node.put()
+            node.update()
             # invalidate cache
             node.invalidate_cache()
 

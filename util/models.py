@@ -22,9 +22,18 @@ SUBTREE = 2
 
 sep = u'.'
 
-def update_full(key, nodes):
+def update_full(key, nodes, callbacks={}):
     nodes[key].path = u'%s%s%s' % (nodes[nodes[key].ancestors[-1]].path,
-                                                               sep, nodes[key].pos)
+                                   sep, nodes[key].pos)
+    # Hook Management.
+    # custom hooks passed to the method
+    if callbacks.get('update_path', None):
+        nodes[key] = callbacks.get('update_path')(nodes[key], nodes[nodes[key].ancestors[-1]])
+    # class hooks for the model
+    class_cb = nodes[key].callbacks().get('update_path', None)
+    if class_cb is not None and callable(class_cb):
+        nodes[key] = class_cb(nodes[key], nodes[nodes[key].ancestors[-1]])
+
     if len(nodes[key].children) < 1:
         return nodes
     keys = [k for k in nodes[key].children if k not in nodes.keys()]
@@ -33,14 +42,25 @@ def update_full(key, nodes):
     for child in nodes[key].children:
         nodes[child].ancestors = nodes[key].ancestors + [key]
         nodes[child].path = u'%s%s%s' % (nodes[key].path, sep,
-                                                                         nodes[child].pos)
-        nodes = update_full(child, nodes)
+                                         nodes[child].pos)
+        # recurse?
+        nodes = update_full(child, nodes, callbacks=callbacks)
     return nodes
 
-def update_path(key, nodes):
-    info("calling update_path on %s" % nodes[key])
+def update_path(key, nodes, callbacks={}):
+    # info("calling update_path on %s" % nodes[key])
     nodes[key].path = u'%s%s%s' % (nodes[nodes[key].ancestors[-1]].path,
-                                                               sep, nodes[key].pos)
+                                   sep, nodes[key].pos)
+    # Hook Management.
+    # custom hooks passed to the method
+    if callbacks.get('update_path', None):
+        nodes[key] = callbacks.get('update_path')(nodes[key], nodes[nodes[key].ancestors[-1]])
+    # class hooks for the model
+    class_cb = nodes[key].callbacks().get('update_path', None)
+    if class_cb is not None and callable(class_cb):
+        nodes[key] = class_cb(nodes[key], nodes[nodes[key].ancestors[-1]])
+
+    # Do we need to recurse?
     if len(nodes[key].children) < 1:
         return nodes
     keys = [k for k in nodes[key].children if k not in nodes.keys()]
@@ -48,19 +68,20 @@ def update_path(key, nodes):
         nodes[node.get_key()] = node
     for child in nodes[key].children:
         nodes[child].path = u'%s%s%s' % (nodes[key].path, sep,
-                                                                         nodes[child].pos)
-        nodes = update_path(child, nodes)
+                                         nodes[child].pos)
+        nodes = update_path(child, nodes, callbacks=callbacks)
     return nodes
+
 
 def single_kw_deco(kwds):
     def __fn(fn):
         def _fn(*args, **kwargs):
             if len([1 for x in kwargs.keys() if x in kwds]) > 1:
                 raise BadArgumentException("only one of " \
-                                                                   + '", "'.join(kwds) \
-                                                                   + " allowed, got: " \
-                                                                   + '", "'.join(u'%s:%s' % item \
-                                                                                                 for item in kwargs.items()))
+                                           + '", "'.join(kwds) \
+                                           + " allowed, got: " \
+                                           + '", "'.join(u'%s:%s' % item \
+                                                         for item in kwargs.items()))
             return fn(*args, **kwargs)
         return _fn
     return __fn
@@ -81,7 +102,7 @@ def ensure_stripped_strings(fn):
         return arg
     def _fn(*args, **kwargs):
         return fn(*(args and (clean(arg) for arg in args) or []),
-                          **(kwargs and dict(((k,clean(v)) for k,v in kwargs.iteritems())) or {}))
+                  **(kwargs and dict(((k,clean(v)) for k,v in kwargs.iteritems())) or {}))
     return _fn
 
 class SortedMPNode(db.Model):
@@ -98,34 +119,44 @@ class SortedMPNode(db.Model):
         return u"%s" % self.key()
 
     @classmethod
+    def callbacks(cls):
+        """Overwrite this method if you want
+           custom callbacks for your model
+           it should return a dicitonary of
+           hook: callabe for each of you
+           custom hooks
+           """
+        return {}
+
+    @classmethod
     @ensure_stripped_strings
     @single_kw_deco(['to','before','after'])
-    def add(cls, to=None, before=None, after=None, **kwds):
+    def add(cls, to=None, before=None, after=None, callbacks={}, **kwds):
         if to is not None:
-            return cls.insert(parent=to, **kwds)
+            return cls.insert(parent=to, callbacks=callbacks, **kwds)
         if before is not None:
-            return cls.insert(before=before, **kwds)
+            return cls.insert(before=before, callbacks=callbacks, **kwds)
         if after is not None:
-            return cls.insert(after=after, **kwds)
-        return cls.insert(**kwds)
+            return cls.insert(after=after, callbacks=callbacks, **kwds)
+        return cls.insert(callbacks=callbacks, **kwds)
 
     @classmethod
     @ensure_stripped_strings
     @single_kw_deco(['to','before','after'])
     @min_one_kw
-    def move(cls, key, to=None, before=None, after=None):
+    def move(cls, key, to=None, before=None, after=None, callbacks={}):
         if to is not None:
-            return cls.relocate(key, relative_to=to, mode=SUBTREE)
+            return cls.relocate(key, relative_to=to, mode=SUBTREE, callbacks=callbacks)
         if before is not None:
-            return cls.relocate(key, relative_to=before, mode=PREPEND)
+            return cls.relocate(key, relative_to=before, mode=PREPEND, callbacks=callbacks)
         if after is not None:
-            return cls.relocate(key, relative_to=after, mode=APPEND)
+            return cls.relocate(key, relative_to=after, mode=APPEND, callbacks=callbacks)
         raise BadArgumentException('invalid args')
 
     @classmethod
     @ensure_stripped_strings
-    def drop(cls, key, cascade=False):
-        return cls.remove(key, all=cascade)
+    def drop(cls, key, cascade=False, callbacks={}):
+        return cls.remove(key, all=cascade, callbacks=callbacks)
 
     @classmethod
     def root(cls):
@@ -133,12 +164,12 @@ class SortedMPNode(db.Model):
 
     @classmethod
     @ensure_stripped_strings
-    def insert(cls, parent=None, before=None, **kwds):
+    def insert(cls, parent=None, before=None, callbacks={}, **kwds):
         """Insert a node with ``name'' to
            as a child of ``parent'' before
            the sibling ``before''"""
 
-        def txn(node_key, parent_key, before=None, after=None):
+        def txn(node_key, parent_key, before=None, after=None, callbacks={}):
             sep = u'.'
             parent, node = db.get([parent_key, node_key])
             if before is not None:
@@ -162,7 +193,7 @@ class SortedMPNode(db.Model):
             elif after is not None:
                 if after not in parent.children:
                     raise MissingException(u'"%s" not child of "%s"' \
-                                                               % (before, parent.get_key()))
+                                           % (before, parent.get_key()))
                 children = db.get(parent.children)
                 inc = False
                 parent.children = []
@@ -185,6 +216,9 @@ class SortedMPNode(db.Model):
                 parent.children += [node.get_key()]
             node.siblings = [child.get_key() for child in children]
             node.path = sep.join([parent.path, str(node.pos)])
+            pre_add_cb = node.callbacks().get('pre_add',None)
+            if pre_add_cb is not None and callable(pre_add_cb):
+                node = pre_add_cb(node, parent)
             db.put([parent, node] + children)
             return True
 
@@ -198,19 +232,19 @@ class SortedMPNode(db.Model):
         node = None
         try:
             node = cls(parent=root,
-                               ancestors=parent.ancestors+[parent.get_key()],
-                               **kwds)
+                       ancestors=parent.ancestors+[parent.get_key()],
+                       **kwds)
             node.put()
-            tx = db.run_in_transaction(txn, node.key(), parent.key(), before)
+            tx = db.run_in_transaction(txn, node.key(), parent.key(), before, callbacks=callbacks)
         finally:
             if tx is None and node is not None:
                 node.delete()
-        return node
+        return db.get(node.key())
 
     @classmethod
-    def relocate(cls, node_key, relative_to, mode=PREPEND):
+    def relocate(cls, node_key, relative_to, mode=PREPEND, callbacks={}):
 
-        def prepend_txn(node_key, relative_to):
+        def prepend_txn(node_key, relative_to, callbacks={}):
             """ moves a node infront of the given relative node """
             node, target = db.get([node_key, relative_to])
             if node.ancestors[-1] == target.ancestors[-1]:
@@ -237,7 +271,7 @@ class SortedMPNode(db.Model):
                 for sibling in siblings:
                     if nodes[sibling].pos >= np:
                         nodes[sibling].pos -= 1
-                    update_path(sibling, nodes)
+                    update_path(sibling, nodes, callbacks=callbacks)
 
                 # reattach
                 rp = nodes[relative_to].pos
@@ -245,9 +279,9 @@ class SortedMPNode(db.Model):
                 for sibling in siblings:
                     if nodes[sibling].pos >= rp:
                         nodes[sibling].pos += 1
-                    update_path(sibling, nodes)
+                    update_path(sibling, nodes, callbacks=callbacks)
 
-                nodes = update_path(node_key, nodes)
+                nodes = update_path(node_key, nodes, callbacks=callbacks)
                 db.put(nodes.values())
                 return True
             else:
@@ -270,7 +304,7 @@ class SortedMPNode(db.Model):
                     nodes[sibling].siblings.remove(node_key)
                     if nodes[sibling].pos >= node.pos:
                         nodes[sibling].pos -= 1
-                        nodes = update_path(sibling, nodes)
+                        nodes = update_path(sibling, nodes, callbacks=callbacks)
 
                 # attach
                 nodes[node_key].ancestors = nodes[relative_to].ancestors
@@ -278,7 +312,7 @@ class SortedMPNode(db.Model):
                 nodes[node_key].siblings = [relative_to]
                 nodes[relative_to].siblings.append(node_key)
 
-                nodes = update_full(node_key, nodes)
+                nodes = update_full(node_key, nodes, callbacks=callbacks)
                 nodes[new_parent].children = []
                 nodes[relative_to].pos += 1
                 rp = nodes[relative_to].pos - 1
@@ -291,7 +325,7 @@ class SortedMPNode(db.Model):
                     nodes[node_key].siblings.append(sibling)
                     if nodes[sibling].pos > rp:
                         nodes[sibling].pos += 1
-                        nodes = update_path(sibling, nodes)
+                        nodes = update_path(sibling, nodes, callbacks=callbacks)
                     lookup[nodes[sibling].pos] = sibling
 
                 lookup[rp] = node_key
@@ -299,11 +333,11 @@ class SortedMPNode(db.Model):
 
                 # automatically sorted, because it's a list!
                 nodes[new_parent].children = lookup.values()
-                nodes = update_path(relative_to, nodes)
+                nodes = update_path(relative_to, nodes, callbacks=callbacks)
                 db.put(nodes.values())
                 return True
 
-        def append_txn(node_key, relative_to):
+        def append_txn(node_key, relative_to, callbacks={}):
             """ moves a node after the given relative node """
             node, target = db.get([node_key, relative_to])
             if node.ancestors[-1] == target.ancestors[-1]:
@@ -330,7 +364,7 @@ class SortedMPNode(db.Model):
                 for sibling in siblings:
                     if nodes[sibling].pos >= np:
                         nodes[sibling].pos -= 1
-                    update_path(sibling, nodes)
+                    update_path(sibling, nodes, callbacks=callbacks)
 
                 # reattach
                 rp = nodes[relative_to].pos
@@ -339,9 +373,9 @@ class SortedMPNode(db.Model):
                 for sibling in siblings:
                     if nodes[sibling].pos > rp:
                         nodes[sibling].pos += 1
-                    update_path(sibling, nodes)
+                    update_path(sibling, nodes, callbacks=callbacks)
 
-                nodes = update_path(node_key, nodes)
+                nodes = update_path(node_key, nodes, callbacks=callbacks)
 
                 db.put(nodes.values())
                 return True
@@ -365,7 +399,7 @@ class SortedMPNode(db.Model):
                     nodes[sibling].siblings.remove(node_key)
                     if nodes[sibling].pos >= node.pos:
                         nodes[sibling].pos -= 1
-                        nodes = update_path(sibling, nodes)
+                        nodes = update_path(sibling, nodes, callbacks=callbacks)
 
                 # attach
                 nodes[node_key].ancestors = nodes[relative_to].ancestors
@@ -373,7 +407,7 @@ class SortedMPNode(db.Model):
                 nodes[node_key].siblings = [relative_to]
                 nodes[relative_to].siblings.append(node_key)
 
-                nodes = update_full(node_key, nodes)
+                nodes = update_full(node_key, nodes, callbacks=callbacks)
                 nodes[new_parent].children = []
                 rp = nodes[relative_to].pos
                 # using a dict to sort the nodes
@@ -385,7 +419,7 @@ class SortedMPNode(db.Model):
                     nodes[node_key].siblings.append(sibling)
                     if nodes[sibling].pos > rp:
                         nodes[sibling].pos += 1
-                        nodes = update_path(sibling, nodes)
+                        nodes = update_path(sibling, nodes, callbacks=callbacks)
                     lookup[nodes[sibling].pos] = sibling
 
                 lookup[rp] = node_key
@@ -393,11 +427,11 @@ class SortedMPNode(db.Model):
 
                 # automatically sorted, because it's a list!
                 nodes[new_parent].children = lookup.values()
-                nodes = update_path(relative_to, nodes)
+                nodes = update_path(relative_to, nodes, callbacks=callbacks)
                 db.put(nodes.values())
                 return True
 
-        def subtree_txn(node_key, relative_to):
+        def subtree_txn(node_key, relative_to, callbacks={}):
             """ make node_key a child of relative_to (appended)
                 1. detach node (remove from parent and siblings)
                     2. add node as child of relative_to
@@ -427,7 +461,7 @@ class SortedMPNode(db.Model):
                 nodes[sibling].siblings.remove(node_key)
                 if nodes[sibling].pos > nodes[node_key].pos:
                     nodes[sibling].pos -= 1
-                    nodes = update_path(sibling, nodes)
+                    nodes = update_path(sibling, nodes, callbacks=callbacks)
             # attach
             nodes[node_key].ancestors = nodes[relative_to].ancestors + [relative_to]
             nodes[node_key].pos = len(nodes[relative_to].children)
@@ -435,7 +469,7 @@ class SortedMPNode(db.Model):
             for child in nodes[relative_to].children:
                 nodes[child].siblings.append(node_key)
             nodes[relative_to].children.append(node_key)
-            nodes = update_full(node_key, nodes)
+            nodes = update_full(node_key, nodes, callbacks=callbacks)
             db.put(nodes.values())
             return True
 
@@ -443,11 +477,11 @@ class SortedMPNode(db.Model):
                   APPEND:  append_txn,
                   SUBTREE: subtree_txn}
         # assume failed transaction
-        tx = db.run_in_transaction(fn[mode], node_key, relative_to)
+        tx = db.run_in_transaction(fn[mode], node_key, relative_to, callbacks=callbacks)
 
     @classmethod
-    def remove(cls, node_key, all=False):
-        def txn(node_key, all=False):
+    def remove(cls, node_key, all=False, callbacks={}):
+        def txn(node_key, all=False, callbacks={}):
             if all:
                 def get_children(node):
                     children = db.get(node.children)
@@ -460,13 +494,13 @@ class SortedMPNode(db.Model):
                 remove = [node]
                 remove += get_children(node)
                 nodes = dict([(n.get_key(), n) for n in db.get([parent] \
-                                                                                                           + node.siblings)])
+                                                               + node.siblings)])
                 nodes[parent].children.remove(node_key)
                 for sibling in node.siblings:
                     nodes[sibling].siblings.remove(node_key)
                     if nodes[sibling].pos > node.pos:
                         nodes[sibling].pos -= 1
-                        nodes = update_path(sibling, nodes)
+                        nodes = update_path(sibling, nodes, callbacks=callbacks)
                 db.put(nodes.values())
                 db.delete(remove)
             else:
@@ -474,20 +508,20 @@ class SortedMPNode(db.Model):
                 parent = node.ancestors[-1]
                 children = node.children
                 nodes = dict([(n.get_key(), n) for n in db.get([parent] \
-                                                                                                           + node.siblings \
-                                                                                                           + children)])
+                                                               + node.siblings \
+                                                               + children)])
                 # update children
                 N = len(children)
                 for child in children:
                     nodes[child].ancestors = node.ancestors
                     nodes[child].pos += node.pos
                     nodes[child].siblings += node.siblings
-                    nodes = update_full(child, nodes)
+                    nodes = update_full(child, nodes, callbacks=callbacks)
 
                 for sibling in node.siblings:
                     if nodes[sibling].pos > node.pos:
                         nodes[sibling].pos += N-1
-                        nodes = update_path(sibling, nodes)
+                        nodes = update_path(sibling, nodes, callbacks=callbacks)
                     nodes[sibling].siblings.remove(node_key)
                     nodes[sibling].siblings += node.children
 
@@ -497,7 +531,7 @@ class SortedMPNode(db.Model):
                 db.put(nodes.values())
                 db.delete(node)
 
-        tx = db.run_in_transaction(txn, node_key, all)
+        tx = db.run_in_transaction(txn, node_key, all, callbacks=callbacks)
 
     def __unicode__(self):
         return u'<%s: %s %s>' % (self.__class__.__name__, self.path, self.name)
@@ -509,4 +543,4 @@ class SortedMPNode(db.Model):
         return str(self)
 
 class Menu(SortedMPNode):
-    name     = db.StringProperty(default='root')
+    name = db.StringProperty(default='root')
