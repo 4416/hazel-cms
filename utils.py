@@ -47,7 +47,7 @@ def memcached(fn):
         if resp is not None:
             return resp
         resp = fn(request, *args, **kwargs)
-        if getattr(resp,'prevent_cache', None) is not None:
+        if getattr(resp,'prevent_cache', False):
             info('Cacheprevention flag set for "%s"' % key)
             return resp
         info('Caching "%s"' % key)
