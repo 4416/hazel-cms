@@ -17,11 +17,14 @@
 {% macro simple_list(items, id=None) %}
   <ul{% if id %} id="{{ id }}"{% endif %}>
   {% for item in items %}
+    <li>
   <div class="state">{{ item.get_state() }}</div>
   <div class="owner"><small>{{ item.author }}</small></div>
   <div class="updated"><small>{{ item.updated|date("%D %H:%M") }}</small></div>
   <div class="modify">{{ link(delete, del, key=item.get_key()) }}</div>
-  <div class="name layout-node ui-helper-clearfix">{{ link(edit, item.name, key=item.get_key()) }}</div>
+  <div class="name layout-node ui-helper-clearfix">{{ link(edit,
+  item.name, key=item.get_key()) }}</div>
+  </li>
   {% endfor %}
   </ul>
 {% endmacro %}

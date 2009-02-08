@@ -33,6 +33,12 @@
 	{%- if n.type == 0 -%}{{ link(add_to, add, key=n.get_key()) }}{%- else -%}{{ add }}{%- endif -%}
 	{{ link(delete, del, key=n.get_key()) }}
   </div>
+  {% if type != 'folder' -%}
+  <div class="link"><small><a class="simple" href="{{ n.get_absolute_url() }}" target="_blank">view</a></small></div>
+  {% if n.is_cached() -%}
+  <div class="cache"><small>Cached</small></div>
+  {%- endif %}
+  {%- endif %}
   <div class="name {{ type }}-node ui-helper-clearfix{% if type == 'file' %} {{ ct2fe[n.content_type] }}-ext{% endif %}">{{ link(edit, n.name, key=n.get_key()) }}</div>
   {% if cn and cn|length > 0 %}{{ rec(n) }}{% endif %}
   </li>

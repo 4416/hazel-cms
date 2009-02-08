@@ -10,12 +10,12 @@
 {%- endmacro %}
   <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-    <title>Dragon CMS - Page</title>
+    <title>{{ app }}</title>
     <link href="/media/stylesheets/dragon.css" media="screen" rel="Stylesheet" type="text/css" />
   </head>
   <body>
     <div id="header">
-      <a href="/admin/" class="title">Dragon CMS</a>
+      <a href="/admin/" class="title">{{ app }}</a>
 	  <ul class="ui-tabs-nav ui-helper-clearfix">
 		{% for endpoint, label in (('admin/pages/list','Pages'), ('admin/layouts/list', 'Layouts'), ('admin/files/list', 'Files'), ('admin/articles/list', 'Articles'), ('admin/cache/list', 'Cache')) -%}
 		<li{% if request().path.startswith(url_for(endpoint)) %} class="ui-tabs-selected"{% endif %}>{{ link(endpoint, label) }}</li>
@@ -33,7 +33,7 @@
     </div>
     <hr class="hidden" />
     <div id="footer">
-      <p><a href="http://www.dragon-cms.com/">Dragon CMS</a> 0.1</p>
+      <p><a href="{{ app_url }}">{{ app }}</a> {{ version }}</p>
       <p id="site-links">
         You are currently logged in as <em>{{ google_users.get_current_user() }}</em>
         <span class="separator"> | </span>

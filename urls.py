@@ -16,7 +16,7 @@ url_map = Map([
         Rule('/feeds/<name>/',                    endpoint='feeds/show'),
         Rule('/fineprint',                        endpoint='tmpl/fineprint'),
         Rule('/page/<path:key>',                  endpoint='pages/show'),
-        Rule('/file/<slug>.<type>',               endpoint='files/show'),
+        Rule('/file/<path:key>.<type>',           endpoint='files/show'),
         Rule('/famfamfam/<file>',                 endpoint='famfamfam/get'),
         Rule('/admin/pages/',                     endpoint='admin/pages/list'),
         Rule('/admin/pages/add/',                 endpoint='admin/pages/add'),
@@ -41,6 +41,7 @@ url_map = Map([
         Rule('/admin/articles/edit/<path:key>',   endpoint='admin/articles/edit'),
         Rule('/admin/articles/delete/<path:key>', endpoint='admin/articles/delete'),
         Rule('/admin/cache/',                     endpoint='admin/cache/list'),
+        Rule('/admin/migrate/',                   endpoint='admin/migrate'),
 ])
 
 from views import blog, feeds, famfamfam, pages as pub_pages
@@ -51,13 +52,6 @@ views = {
     'articles/show'     : blog.show,
     'articles/topic'    : blog.topic,
     'articles/archive'  : lambda r: blog.topic(r,None),
-#    'admin/index'   : admin.index,
-#    'admin/create'  : admin.create,
-#    'admin/edit'    : admin.edit,
-#    'admin/delete'  : admin.delete,
-#    'admin/memcache': admin.memcache,
-#    'admin/memcache/flush': lambda r: admin.memcache(r,True),
-#    'admin/migrate' : admin.migrate,
     'feeds/show'    : feeds.show,
     'tmpl/fineprint': lambda r: blog.direct(r,'fineprint.html'),
         'pages/show'    : pub_pages.show,
@@ -86,6 +80,7 @@ views = {
         'admin/articles/edit' : articles.edit,
         'admin/articles/delete' : articles.delete,
         'admin/cache/list'    : cache.list,
+    'admin/migrate'       : pages.migrate
 }
 from util.decorators import require_admin
 for key in views:

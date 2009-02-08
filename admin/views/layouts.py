@@ -41,7 +41,7 @@ def edit(request, key):
         form.auto_populate(layout)
         layout.put()
         # clear depending caches
-        for node in layout.node_set:
+        for node in layout.get_affected_nodes():
             node.invalidate_cache()
         if form.save.data is True:
             return redirect('/admin/layouts/', 301)

@@ -91,6 +91,10 @@ jinja_env.filters['slugify'] = slugify
 jinja_env.globals['request'] = lambda: local.request
 jinja_env.globals['ct2fe'] = content_type_to_file_ext
 
+from main import __app__, __version__, __URL__
+jinja_env.globals['app'] = __app__
+jinja_env.globals['version'] = __version__
+jinja_env.globals['app_url'] = __URL__
 
 def menu(root='root'):
     base = Node.all().filter('name = ', root).get()
@@ -109,11 +113,18 @@ def file_path(slug):
     f = File.all().filter('slug = ', slug).get()
     if f is None:
         return u''
-    return u'/file/%s.%s' % (f.slug, content_type_to_file_ext[f.content_type])
+    return f.get_absolute_url()
+
+def page_path(slug):
+    p = Node.all().filter('slug = ', slug).get()
+    if p is None:
+        return u''
+    return p.get_absolute_url()
 
 
 layout_env = Environment(loader=LayoutLoader())
 layout_env.globals['file'] = file_path
+layout_env.globals['page'] = page_path
 layout_env.globals['menu'] = menu
 
 

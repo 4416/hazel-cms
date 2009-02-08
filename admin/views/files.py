@@ -3,7 +3,7 @@ from google.appengine.api import users
 from google.appengine.ext import db
 from datetime import datetime, timedelta
 from werkzeug import redirect
-from utils import render_template, Response, file_ext_to_content_type
+from utils import render_template, Response, file_ext_to_content_type, memcached
 from util.tools import slugify, rec
 from models.pages import File, FOLDER, FILE
 from admin.forms import FolderForm, FileForm, FileEditForm, FileConfirmDeleteForm
@@ -95,15 +95,8 @@ def move(request, A, mode, B):
     switch[mode](A,B)
     return redirect('/admin/files/', 301)
 
-def show(request, slug, type):
-    key = request.path #+request.query_string
-    resp = memcache.get(key)
-    if resp is not None:
-        return resp
-    else:
-        file = File.all().filter('slug = ', slug)\
-                   .filter('content_type =', file_ext_to_content_type[type]).get()
-        resp = Response(file.data, mimetype=file.content_type)
-        resp.expires = datetime.now() + timedelta(7)
-        memcache.add(key,resp)
-        return resp
+@memcached
+def show(request, key, type):
+    file = File.all().filter('abs_path = ', key)\
+           .filter('content_type =', file_ext_to_content_type[type]).get()
+    return Response(file.data, mimetype=file.content_type)

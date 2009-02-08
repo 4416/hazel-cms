@@ -264,11 +264,11 @@ div.article-node a{
 
 #list div.gif-ext, #list div.jpg-ext {
 	background: url(/famfamfam/image.png) no-repeat 0 .3em;
-	padding-left: 1.2em
+	padding-left: 20px !important;
 }
 #list div.css-ext {
 	background: url(/famfamfam/style.png) no-repeat 0 .3em;
-	padding-left: 1.2em;
+	padding-left: 20px !important;
 }
 
 #tab-metadata .textarea {
@@ -327,9 +327,6 @@ form {
 	text-decoration: none;
 	color: #000000;
 	overflow:hidden;
-}
-#list ul div {
-	position: relative;
 }
 #list a .title {
 	font-weight: bold;
@@ -436,7 +433,7 @@ p.edit-info {
 	overflow: hidden;
 	white-space: nowrap;
 	margin-left: -16px;
-	padding-left: 16px
+	padding-left: 16px;
 }
 #list ul div.next a, #list ul div.prev a {
 	margin-left: -16px;

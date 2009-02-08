@@ -206,3 +206,35 @@ def move(request, A, mode, B):
     switch[mode](A,B)
     info("Done")
     return redirect('/admin/pages/', 301)
+
+
+def migrate(request):
+    from models.pages import File
+    
+    for n in File.all():
+        if len(n.ancestors) < 1:
+            continue
+        _slug = n.slug
+        n.slug = _slug + u'-'
+        n.update()
+        n.slug = _slug
+        n.update()
+
+    from models.pages import Node
+
+    for n in Node.all():
+        if len(n.ancestors) < 1:
+            continue
+        _slug = n.slug
+        n.slug = _slug + u'-'
+        n.update()
+        n.slug = _slug
+        n.update()
+    
+    from models.pages import Layout
+
+    for layout in Layout.all():
+        layout.put()
+
+    from utils import Response
+    return Response("updated")

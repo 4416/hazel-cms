@@ -62,7 +62,7 @@ indexes:
   - name: published
   - name: sort_key
 
-# Used 746 times in query history.
+# Used 773 times in query history.
 - kind: Post
   properties:
   - name: published
