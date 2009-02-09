@@ -4,7 +4,7 @@ from wtforms import Form, BooleanField, HiddenField, TextField, PasswordField, v
 from wtforms import DateTimeField, TextAreaField, SelectField, SubmitField, FileField
 
 class FolderForm(Form):
-    name = TextField(u'Foldername', [validators.length(min=4, max=25)])
+    name = TextField(u'Foldername', [validators.length(min=2, max=25)])
     slug = TextField(u'Slug')
     breadcrumb = TextField(u'Breadcrumb')
     state = SelectField(u'State', choices=[(0, 'Hidden'),
@@ -16,7 +16,7 @@ class FolderForm(Form):
     cont = SubmitField(u'Save and Continue Editing')
 
 class PageForm(FolderForm):
-    name = TextField(u'Page Title', [validators.length(min=4, max=25)])
+    name = TextField(u'Page Title', [validators.length(min=2, max=25)])
     description = TextAreaField(u'Description')
     keywords = TextField(u'Keywords')
     body = TextAreaField(u'Body')
@@ -41,7 +41,7 @@ class ConfirmDeleteForm(Form):
     cascade = SubmitField(u'Delete Page and affected Pages')
 
 class LayoutForm(Form):
-    name = TextField(u'Layout Title', [validators.length(min=4, max=25)])
+    name = TextField(u'Layout Title', [validators.length(min=2, max=25)])
     body = TextAreaField(u'Body')
 
     active = BooleanField(u'Enabled')
