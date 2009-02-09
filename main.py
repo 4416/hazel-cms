@@ -6,10 +6,11 @@ from os import path
 from usersettings import ALLOWED_HOSTS
 from logging import info
 
-__app__ = "Dragon CMS"
+__app__ = "Hazel CMS"
 __version__ = "0.1"
 __author__ = "Moritz Angermann <moritz.angermann@gmail.com>"
-__copyright__ = "Copyright (c) 2009, Moritz Angermann"
+__copyright__ = "Copyright (c) 2008-2009, Moritz Angermann"
+__license__ = "BSD License"
 __URL__ = "http://www.dragon-cms.com"
 
 
