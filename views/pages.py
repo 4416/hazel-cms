@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
-from utils import layout_response_from_string, memcached
-from models.pages import Node, PAGE
+from datetime import datetime
+from datetime import timedelta
+
 from google.appengine.api import memcache
-from datetime import datetime, timedelta
+
+from util.helper import layout_response_from_string
+from util.decorators import memcached
+from models.pages import Node, PAGE
 
 @memcached
 def show(request, key):

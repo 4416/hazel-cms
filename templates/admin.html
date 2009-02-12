@@ -18,7 +18,7 @@
       <a href="/admin/" class="title">{{ app }}</a>
 	  <ul class="ui-tabs-nav ui-helper-clearfix">
 		{% for endpoint, label in (('admin/pages/list','Pages'), ('admin/layouts/list', 'Layouts'), ('admin/files/list', 'Files'), ('admin/articles/list', 'Articles'), ('admin/cache/list', 'Cache')) -%}
-		<li{% if request().path.startswith(url_for(endpoint)) %} class="ui-tabs-selected"{% endif %}>{{ link(endpoint, label) }}</li>
+		<li{% if request.path.startswith(url_for(endpoint)) %} class="ui-tabs-selected"{% endif %}>{{ link(endpoint, label) }}</li>
 		{%- endfor -%}
 		{# <li style="float:right"><a href="/admin/settings">Administration</a></li> #}
 	  </ul>

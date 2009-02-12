@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-from google.appengine.ext import db
+from urllib2 import unquote
 from exceptions import Exception
+from google.appengine.ext import db
 from google.appengine.api import users
 from google.appengine.api import memcache
 from datetime import datetime
-import utils
-from urllib2 import unquote
+from util.globals import url_for
 
 class NonUniqueException(Exception):
     pass
@@ -121,8 +121,8 @@ class Post(db.Model):
         if key.startswith('Published:'):
             key = key[10:]
         if not unquote_url:
-            return utils.url_for('articles/show', key=key)
-        return unquote(utils.url_for('articles/show', key=key))
+            return url_for('articles/show', key=key)
+        return unquote(url_for('articles/show', key=key))
 
     def is_cached(self):
         return memcache.get(self.get_absolute_url(unquote_url=True)) is not None

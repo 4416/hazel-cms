@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
+from urllib2 import quote
+from google.appengine.api import users
+
 from werkzeug import redirect
 from models.blog import Post
-from utils import render_template, pager, memcached
-from google.appengine.api import users
-from urllib2 import quote
+from util.helper import render_template
+from util.tools import pager
+from util.decorators import memcached
 
 def index(request):
     latest = Post.pub().get()

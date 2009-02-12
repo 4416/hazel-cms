@@ -25,7 +25,6 @@
 (('/Users/angerman/Projekte/hazel-cms','admin/views/posts.py'), ('/Users/angerman/Projekte/hazel-cms/templates','form.html'))
 (('/Users/angerman/Projekte/hazel-cms','admin/views/posts.py'), ('/Users/angerman/Projekte/hazel-cms/templates','post_confirm_delete.html'))
 (('/Users/angerman/Projekte/hazel-cms','admin/views/posts.py'), ('/Users/angerman/Projekte/hazel-cms/templates','memcache_stats.html'))
-(('/Users/angerman/Projekte/hazel-cms','blog/views.py'), ('/Users/angerman/Projekte/hazel-cms/templates','show_post.html'))
 (('/Users/angerman/Projekte/hazel-cms','util/decorators.py'), ('/Users/angerman/Projekte/hazel-cms/templates','no_access.html'))
 (('/Users/angerman/Projekte/hazel-cms','views/blog.py'), ('/Users/angerman/Projekte/hazel-cms/templates','empty.html'))
 (('/Users/angerman/Projekte/hazel-cms','views/blog.py'), ('/Users/angerman/Projekte/hazel-cms/templates','show_post.html'))

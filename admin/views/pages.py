@@ -1,16 +1,27 @@
 # -*- coding: utf-8 -*-
-from models.pages import Node, FOLDER, PAGE, Layout, Block
-from admin.forms import FolderForm, PageForm, ConfirmDeleteForm, BlockAddForm, BlockForm
-from util.tools import sort_nicely, slugify, rec
-from utils import render_template, pager
+from datetime import datetime
 from logging import info
+
 from google.appengine.api import users
 from google.appengine.ext import db
 from google.appengine.api import memcache
-from datetime import datetime
-from werkzeug import redirect
 
+from werkzeug import redirect
 import wtforms
+
+from models.pages import Node, FOLDER, PAGE, Layout, Block
+from admin.forms import FolderForm, PageForm, ConfirmDeleteForm, BlockAddForm, BlockForm
+from util.tools import sort_nicely
+from util.tools import slugify
+from util.tools import rec
+from util.tools import pager
+from util.helper import render_template
+
+from models.pages import File
+from models.pages import Node
+from models.pages import Layout
+from util.net import Response
+
 
 fn = wtforms.fields.SelectField._selected
 def _fn(s,v):
@@ -209,7 +220,6 @@ def move(request, A, mode, B):
 
 
 def migrate(request):
-    from models.pages import File
     
     for n in File.all():
         if len(n.ancestors) < 1:
@@ -220,8 +230,6 @@ def migrate(request):
         n.slug = _slug
         n.update()
 
-    from models.pages import Node
-
     for n in Node.all():
         if len(n.ancestors) < 1:
             continue
@@ -231,10 +239,8 @@ def migrate(request):
         n.slug = _slug
         n.update()
     
-    from models.pages import Layout
 
     for layout in Layout.all():
         layout.put()
 
-    from utils import Response
     return Response("updated")

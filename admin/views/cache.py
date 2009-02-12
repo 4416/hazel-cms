@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from google.appengine.api import memcache
-from utils import render_template
+from util.helper import render_template
 
 def list(request):
     if request.args.get('flush',False):

@@ -1,17 +1,24 @@
 # -*- coding: utf-8 -*-
+from logging import info
+from datetime import datetime
+from datetime import timedelta
+
+from google.appengine.api import memcache
 from google.appengine.api import users
 from google.appengine.ext import db
-from datetime import datetime, timedelta
+
 from werkzeug import redirect
-from utils import render_template, Response, file_ext_to_content_type, memcached
+
+from util.helper import render_template
+from util.net import Response
+from util.decorators import memcached
+from util.constants import file_ext_to_content_type
 from util.tools import slugify, rec
 from models.pages import File, FOLDER, FILE
 from admin.forms import FolderForm, FileForm, FileEditForm, FileConfirmDeleteForm
 # in case we need the list function
 _list = list
 
-from logging import info
-from google.appengine.api import memcache
 
 ################################################################################
 # Views

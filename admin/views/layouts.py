@@ -2,7 +2,7 @@
 from google.appengine.api import users
 from datetime import datetime
 from werkzeug import redirect
-from utils import render_template
+from util.helper import render_template
 from models.pages import Layout
 from admin.forms import LayoutForm, ConfirmDeleteLayoutForm
 # in case we need the list function
