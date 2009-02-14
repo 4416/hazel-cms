@@ -9,6 +9,7 @@ from . import NutSettings
 def build_rules():
     settings = NutSettings()
     rules = [
+        Rule('/', defaults={'key':''}, endpoint='show'),
         Rule('/<path:key>', endpoint='show'),
         ]
     if settings.submount:

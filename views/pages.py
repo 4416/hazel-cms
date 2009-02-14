@@ -2,11 +2,10 @@
 from datetime import datetime
 from datetime import timedelta
 
-from google.appengine.api import memcache
-
 from util.helper import layout_response_from_string
 from util.decorators import memcached
-from models.pages import Node, PAGE
+from models.pages import Node
+from models.pages import PAGE
 
 @memcached
 def show(request, key):
