@@ -3,9 +3,7 @@ import sys
 import re
 from glob import glob
 from os import path
-from usersettings import ALLOWED_HOSTS
 from logging import info
-import os, sys
 
 
 ################################################################################
@@ -13,6 +11,7 @@ import os, sys
 ################################################################################
 root_path = path.abspath(path.dirname(__file__))
 sys.path.insert(0, path.join(root_path, 'lib'))
+base_path = path.join(root_path, 'hazel')
 
 ################################################################################
 # imports
@@ -25,28 +24,27 @@ from werkzeug import redirect
 from jinja2 import Environment
 from jinja2 import FileSystemLoader
 
-from util.manage import manager
-from util.manage import local
-from util.net import Request
-from util.decorators import update_environment
-from util.decorators import debugged
-from util.decorators import jinja_const
-from util.constants import file_ext_to_content_type
-from util.constants import content_type_to_file_ext
-from util import filter
+from hazel.util.manage import manager
+from hazel.util.manage import local
+from hazel.util.net import Request
+from hazel.util.decorators import update_environment
+from hazel.util.decorators import debugged
+from hazel.util.decorators import jinja_const
+from hazel.util.constants import file_ext_to_content_type
+from hazel.util.constants import content_type_to_file_ext
+from hazel.util import filter
 
-from urls import url_map
-from urls import views
+from hazel.urls import build_urls
 
-from loader import LayoutLoader
+from hazel.loader import LayoutLoader
+
+from hazel import NutSettings as AppSettings
 
 ################################################################################
 # globals
 ################################################################################
 rx = '(?P<protocol>https?://)(?P<host>[^:/]+):?(?P<post>[^/]*)(?P<query>.*)'
 rxc = re.compile(rx)
-
-TEMPLATE_PATH = path.join(path.dirname(__file__), 'templates')
 
 __app__ = jinja_const('app', "Hazel CMS")
 __version__ = jinja_const('version', "0.1")
@@ -59,13 +57,13 @@ jinja_const('fe2ct', file_ext_to_content_type)
 jinja_const('google_users', users)
 
 # FIXME:
-jinja_const('feedburner_id', 'journal-ma')
-jinja_const('disqus_forum', 'devjma')
+#jinja_const('feedburner_id', 'journal-ma')
+#jinja_const('disqus_forum', 'devjma')
 
-import usersettings as us
-us.AUTHOR, us.AUTHOR_EMAIL = us.ADMINS[0]
-us.SNAIL_ADDRESS = us.AUTHOR_SNAIL
-jinja_const('SETTINGS', us)
+#import usersettings as us
+#us.AUTHOR, us.AUTHOR_EMAIL = us.ADMINS[0]
+#us.SNAIL_ADDRESS = us.AUTHOR_SNAIL
+#jinja_const('SETTINGS', us)
 # END FIXME
 
 
@@ -77,15 +75,17 @@ jinja_const('SETTINGS', us)
 @responder
 def application(environ, start_response):
     local.request = request = jinja_const('request', Request(environ) )
+    settings = AppSettings()
+    jinja_const('app_settings', settings)
     m = rxc.match(request.url)
     m = m.groupdict()
-    if m['host'] not in ALLOWED_HOSTS:
-        redir = '%s%s%s' % (m['protocol'], ALLOWED_HOSTS[0], m['query'])
+    if not any([h.endswith(m['host']) for h in settings.hosts]):
+        redir = '%s%s%s' % (m['protocol'], settings.hosts[0], m['query'])
         return redirect(redir)
     response = None
     update_environment()
-    local.adapter = adapter = url_map.bind_to_environ(environ)
-    response = adapter.dispatch(lambda e, v: views[e](request, **v),
+    local.adapter = adapter = local.url_map.bind_to_environ(environ)
+    response = adapter.dispatch(lambda e, v: local.views[e](request, **v),
                                 catch_http_exceptions=True)
 
     return response
@@ -94,10 +94,18 @@ def application(environ, start_response):
 # initiation
 ################################################################################
 def main():
-    local.jinja_env = Environment(loader=FileSystemLoader(TEMPLATE_PATH),
+    appSettings = AppSettings()
+    template_paths = [path.join(base_path, 'templates')]
+    template_paths.extend([path.join(base_path, 'nuts', nut, 'templates')\
+                           for nut in appSettings.nuts])
+    local.jinja_env = Environment(loader=FileSystemLoader(template_paths),
                                   extensions=['jinja2.ext.do'])
     local.layout_env = Environment(loader=LayoutLoader())
+    for nut in appSettings.nuts:
+        try: exec "from hazel.nuts.%s import setup; setup()" % nut
+        except: pass
     # at this point all other modules should have been loaded
+    local.url_map, local.views = build_urls()
     update_environment();
     run_wsgi_app(application)
 

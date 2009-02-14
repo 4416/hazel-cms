@@ -1,0 +1,58 @@
+{# -*- coding: utf-8 -*- #}
+{% extends "base.html" %}
+{% block title_ext %}{{ post.title|smartypants }} ({{ post.pub_date|date("%a %b %d %Y") }}) | {% endblock %}
+{% block body %}
+{% set prev = post.prev() %}
+{% set next = post.next() %}
+{% if next or prev %}
+<hr style="border:0; border-bottom: 1px solid #ddd">
+<div id="post_nav" style="text-align:right">
+  {% if next %}
+  <span style="float:left;white-space:nowrap">&larr; <a href="/{{ next.lookup }}">{{ next.title|amp|smartypants }}</a></span>
+  {% endif %}
+  {% if prev %}
+  <span style="white-space:nowrap">
+  <a href="/{{ prev.lookup }}">{{ prev.title|amp|smartypants }}</a> &rarr;
+  </span>
+  {% endif %}
+</div>
+<hr style="border:0; border-bottom: 1px solid #ddd; clear:both">
+{% endif %}
+<br />
+<h1>{{ post.title|amp|smartypants }}</h1>
+<div class="meta">
+  {{ post.pub_date|date("%a %b %d %Y") }}, {{ post.city }}{% if post.city != post.country %} ({{ post.country }}){% endif %} — {{ post.author.fullname() }}
+  on {% for topic in post.topics %}
+    <a href="/topic/{{ topic }}">{{ topic }}</a>{% if not loop.last %}, {% endif %}
+    {% endfor %}
+</div>
+<div id="body" class="hyphenate">
+  {{ post.html }}
+</div>
+
+{% if app_settings.google_adsense_client %}
+<!-- ADSENSE -->
+<hr style="border:0; border-bottom: 1px solid #ddd">
+<script type="text/javascript"><!--
+google_ad_client = "{{ app_settings.google_adsense_client }}";
+google_ad_slot   = "{{ app_settings.google_adsense_slot }}";
+google_ad_width  = {{ app_settings.google_adsense_width }};
+google_ad_height = {{ app_settings.google_adsense_height }};
+//-->
+</script>
+
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+<hr style="border:0; border-bottom: 1px solid #ddd; clear:both">
+<!-- ADSENSE END -->
+{% endif %}
+{% if app_settings.disqus_forum %}
+<!-- DISQUS -->
+<div>
+<div id="disqus_thread"></div>
+<noscript><a href="http://{{ app_settings.disqus_forum }}.disqus.com/?url=ref">View the discussion thread.</a></noscript><a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+<!-- DISQUS END -->
+{% endif %}
+{% endblock %}

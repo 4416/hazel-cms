@@ -1,0 +1,33 @@
+{# -*- coding: utf-8 -*- #}
+{% extends 'admin.html' %}
+{% block content %}
+<!-- content -->
+<h1>Configuration</h1>
+<form action="{{ action }}" method="post">
+  <div id="tabs">
+	<ul class="ui-tabs-nav">
+      {% for nut in nuts %}
+	  <li><a href="#tab-{{ nut }}">{{ nut }}</a></li>
+      {% endfor %}
+	</ul>
+    {% for nut in nuts %}
+    {% set form = nuts[nut].form %}
+    <div id="tab-{{ nut }}" class="ui-tabs-panel">
+    {% for field in form %}
+      {% if field.type != 'SubmitField' %}
+      <p>{{ field.label }}{{ field }}<small>{{ field.description
+      }}</small></p>
+      {% endif %}
+      {% endfor %}
+      </div>
+    {% endfor %}
+  </div>
+{#  <p class="edit-info"><small>Last updated by {{ settings.author }}
+  on {{ settings.updated|date('%D %H:%M') }}</small></p> #}
+  <p class="buttons">
+    {{ nuts['hazel'].form.save(class='button') }}
+    or <a href="/admin/articles">Cancel</a>
+  </p>
+</form>
+<!-- end content -->
+{% endblock %}
