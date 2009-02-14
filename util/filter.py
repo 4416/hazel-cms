@@ -150,7 +150,6 @@ def smartypants(text):
 @layout_filter
 @jinja_filter
 def titlecase(text):
-    text = force_unicode(text)
     try:
         import titlecase
     except ImportError:

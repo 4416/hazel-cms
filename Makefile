@@ -10,3 +10,14 @@ graph:
 
 flat:
 	cat *.dep | sfood-flatten
+
+check:
+	@echo "sfood-checker"
+	@echo "============="
+	sfood-checker
+	@echo "pyflakes"
+	@echo "========"
+	find . -name '*.py' | xargs pyflakes
+
+lint:
+	pylint *

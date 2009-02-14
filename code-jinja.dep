@@ -5,6 +5,7 @@
 (('/Users/angerman/Projekte/hazel-cms','admin/views/articles.py'), ('/Users/angerman/Projekte/hazel-cms/templates','articles/form.html'))
 (('/Users/angerman/Projekte/hazel-cms','admin/views/articles.py'), ('/Users/angerman/Projekte/hazel-cms/templates','post_confirm_delete.html'))
 (('/Users/angerman/Projekte/hazel-cms','admin/views/cache.py'), ('/Users/angerman/Projekte/hazel-cms/templates','cache/list.html'))
+(('/Users/angerman/Projekte/hazel-cms','admin/views/configure.py'), ('/Users/angerman/Projekte/hazel-cms/templates','configure.html'))
 (('/Users/angerman/Projekte/hazel-cms','admin/views/files.py'), ('/Users/angerman/Projekte/hazel-cms/templates','files/list.html'))
 (('/Users/angerman/Projekte/hazel-cms','admin/views/files.py'), ('/Users/angerman/Projekte/hazel-cms/templates','files/form.html'))
 (('/Users/angerman/Projekte/hazel-cms','admin/views/files.py'), ('/Users/angerman/Projekte/hazel-cms/templates','files/form.html'))

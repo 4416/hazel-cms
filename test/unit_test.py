@@ -8,7 +8,7 @@
 import unittest
 import logging
 from google.appengine.ext import db
-from util.models import Menu, PREPEND, APPEND, SUBTREE, SortedMPNode
+from util.sortedmpnode import Menu, PREPEND, APPEND, SUBTREE, SortedMPNode
 from util.tools import sort_nicely
 import re
 from random import randint
@@ -402,7 +402,7 @@ class ModelTest(TreeTest):
         expected = [[x,] for x in 'B,C,A,D,E,F'.split(',')]
         for i in range(len(expected)):
             if expected[i][0] == 'A':
-                expectd[i].append([[x,] for x in 'a,b,c,e,f'.split(',')])
+                expected[i].append([[x,] for x in 'a,b,c,e,f'.split(',')])
                 break
         self.assertEqualTree(expected)
 

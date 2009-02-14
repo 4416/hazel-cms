@@ -1,0 +1,27 @@
+{# -*- coding: utf-8 -*- #}
+{% extends 'admin.html' %}
+{% block content %}
+<!-- content -->
+<h1>Configure {{ nut }}</h1>
+<form action="{{ action }}" method="post">
+  <div class="ui-tabs">
+	<ul class="ui-tabs-nav ui-tabs-selected ui-helper-clearfix">
+	  <li><span class="fake">Settings</span></a>
+	</ul>
+	<div class="ui-tabs-panel">
+      {% for field in form %}
+      {% if field.type != 'SubmitField' %}
+      <p>{{ field.label }}{{ field }}<small>{{ field.description
+      }}</small></p>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  <p class="edit-info"><small>Last updated by {{ settings.author }} on {{ settings.updated|date('%D %H:%M') }}</small></p>
+  <p class="buttons">
+    {{ form.save(class='button') }}
+    or <a href="/admin/articles">Cancel</a>
+  </p>
+</form>
+<!-- end content -->
+{% endblock %}

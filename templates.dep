@@ -3,6 +3,7 @@
 (('/Users/angerman/Projekte/hazel-cms/templates', 'articles/form.html'), ('/Users/angerman/Projekte/hazel-cms/templates', 'admin.html'))
 (('/Users/angerman/Projekte/hazel-cms/templates', 'articles/list.html'), ('/Users/angerman/Projekte/hazel-cms/templates', 'admin.html'))
 (('/Users/angerman/Projekte/hazel-cms/templates', 'cache/list.html'), ('/Users/angerman/Projekte/hazel-cms/templates', 'admin.html'))
+(('/Users/angerman/Projekte/hazel-cms/templates', 'configure.html'), ('/Users/angerman/Projekte/hazel-cms/templates', 'admin.html'))
 (('/Users/angerman/Projekte/hazel-cms/templates', 'empty.html'), ('/Users/angerman/Projekte/hazel-cms/templates', 'base.html'))
 (('/Users/angerman/Projekte/hazel-cms/templates', 'files/confirm_delete.html'), ('/Users/angerman/Projekte/hazel-cms/templates', 'admin.html'))
 (('/Users/angerman/Projekte/hazel-cms/templates', 'files/form.html'), ('/Users/angerman/Projekte/hazel-cms/templates', 'admin.html'))

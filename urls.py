@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-from werkzeug.routing import Map, Rule
+from werkzeug.routing import Map, Rule, EndpointPrefix
 
-url_map = Map([
+
+rules = [
         Rule('/',                                 endpoint='articles/index'),
         Rule('/<path:key>',                       endpoint='articles/show'),
         Rule('/topic/<tag>/',                     endpoint='articles/topic'),
@@ -15,7 +16,7 @@ url_map = Map([
 #       Rule('/admin/migrate/<model>/',           endpoint='admin/migrate'),
         Rule('/feeds/<name>/',                    endpoint='feeds/show'),
         Rule('/fineprint',                        endpoint='tmpl/fineprint'),
-        Rule('/page/<path:key>',                  endpoint='pages/show'),
+#        Rule('/page/<path:key>',                  endpoint='pages/show'),
         Rule('/file/<path:key>.<type>',           endpoint='files/show'),
         Rule('/famfamfam/<file>',                 endpoint='famfamfam/get'),
         Rule('/admin/pages/',                     endpoint='admin/pages/list'),
@@ -40,12 +41,19 @@ url_map = Map([
         Rule('/admin/articles/add/',              endpoint='admin/articles/add'),
         Rule('/admin/articles/edit/<path:key>',   endpoint='admin/articles/edit'),
         Rule('/admin/articles/delete/<path:key>', endpoint='admin/articles/delete'),
+        Rule('/admin/configure/<nut>/',           endpoint='admin/configure'),
         Rule('/admin/cache/',                     endpoint='admin/cache/list'),
         Rule('/admin/migrate/',                   endpoint='admin/migrate'),
-])
+]
+for nut in ('pages',):
+    exec 'from nuts.%s.urls import build_rules' % nut
+    rules.append(EndpointPrefix('%s/' % nut, build_rules()))
+    del build_rules
+
+url_map = Map(rules)
 
 from views import blog, feeds, famfamfam, pages as pub_pages
-from admin.views import pages, layouts, files, articles, cache
+from admin.views import pages, layouts, files, articles, cache, configure
 from models.pages import FOLDER
 views = {
     'articles/index'    : blog.index,
@@ -80,7 +88,8 @@ views = {
         'admin/articles/edit' : articles.edit,
         'admin/articles/delete' : articles.delete,
         'admin/cache/list'    : cache.list,
-    'admin/migrate'       : pages.migrate
+    'admin/migrate'       : pages.migrate,
+    'admin/configure'     : configure.nut
 }
 from util.decorators import require_admin
 for key in views:

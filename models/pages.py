@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-from util.models import SortedMPNode
+from util.sortedmpnode import SortedMPNode
 from google.appengine.ext import db
 from google.appengine.api import memcache
 from logging import info
-from util.globals import url_for
 from util.constants import content_type_to_file_ext
 import re
 
@@ -72,6 +71,7 @@ class AbsPathSMPNode(SortedMPNode):
         return db.run_in_transaction(txn, self)
 
     def get_absolute_url(self):
+        from util.globals import url_for
         return url_for(self._endpoint, key=self.abs_path)
 
 class Layout(db.Model):
@@ -164,6 +164,7 @@ class File(AbsPathSMPNode, MethodMixin):
     size = db.IntegerProperty(default=0)
 
     def get_absolute_url(self):
+        from util.globals import url_for
         if self.abs_path is not None:
             return url_for(self._endpoint, key=self.abs_path,
                            type=content_type_to_file_ext[self.content_type])

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from models.pages import MethodMixin, Layout
-from util.models import SortedMPNode
+from util.sortedmpnode import SortedMPNode
 from google.appengine.ext import db
 #class Test(SortedMPNode):
 #       name     = db.StringProperty(default='root')
