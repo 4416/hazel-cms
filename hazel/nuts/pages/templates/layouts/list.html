@@ -1,0 +1,48 @@
+{# -*- coding: utf-8 -*- #}
+{% extends "admin.html" %}
+
+{% macro fff(img) -%}
+  <img src="{{ url_for('famfamfam/get', file=img + ".png") }}" />
+{%- endmacro %}
+
+{% set left = fff("arrow_left") %}
+{% set right = fff("arrow_right") %}
+{% set up = fff("arrow_up") %}
+{% set down = fff("arrow_down") %}
+{% set add = fff("page_add") %}
+{% set del = fff("delete") %}
+{% set delete = "nut:pages/delete_layout" %}
+{% set edit = "nut:pages/edit_layout" %}
+
+{% macro simple_list(items, id=None) %}
+  <ul{% if id %} id="{{ id }}"{% endif %}>
+  {% for item in items %}
+    <li>
+  <div class="state">{{ item.get_state() }}</div>
+  <div class="owner"><small>{{ item.author }}</small></div>
+  <div class="updated"><small>{{ item.updated|date("%D %H:%M") }}</small></div>
+  <div class="modify">{{ link(delete, del, key=item.get_key()) }}</div>
+  <div class="name layout-node ui-helper-clearfix">{{ link(edit,
+  item.name, key=item.get_key()) }}</div>
+  </li>
+  {% endfor %}
+  </ul>
+{% endmacro %}
+
+{% block content %}
+        <!-- content -->
+        <h1>Layouts</h1>
+<div id="list">
+<div id="list-header">
+    <div class="state">Status</div>
+	<div class="owner">Owner</div>
+	<div class="updated">Updated</div>
+    <div class="modify">Modify</div>
+    <div>Layout</div>
+</div>
+{% if layouts %}{{ simple_list(layouts) }}{% endif %}
+
+Add a {{ link('nut:pages/add_layout', 'new layout') }}
+</div>
+        <!-- end content -->
+{% endblock %}
