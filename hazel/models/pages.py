@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 # global
-from logging import info
 import re
 
 # appengine
@@ -123,7 +122,7 @@ class Layout(db.Model):
 
 class Node(AbsPathSMPNode, MethodMixin):
 
-    _endpoint = 'pages/show'
+    _endpoint = 'nut:pages/show'
 
     type = db.IntegerProperty(default=FOLDER, required=True)
 
@@ -176,5 +175,4 @@ class File(AbsPathSMPNode, MethodMixin):
         if self.abs_path is not None:
             return url_for(self._endpoint, key=self.abs_path,
                            type=content_type_to_file_ext[self.content_type])
-        info(self)
         return ''

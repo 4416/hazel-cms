@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from os import environ
 from types import StringTypes
+from functools import wraps
 
 from logging import info
 from datetime import datetime
@@ -54,6 +55,7 @@ def require_admin(fn):
 
 # memcache decorator
 def memcached(fn):
+    @wraps(fn)
     def _fn(request, *args, **kwargs):
         key = request.path
         resp = memcache.get(key)

@@ -30,6 +30,7 @@ from hazel.util.net import Request
 from hazel.util.decorators import update_environment
 from hazel.util.decorators import debugged
 from hazel.util.decorators import jinja_const
+from hazel.util.decorators import layout_const
 from hazel.util.constants import file_ext_to_content_type
 from hazel.util.constants import content_type_to_file_ext
 from hazel.util import filter
@@ -56,17 +57,6 @@ jinja_const('ct2fe', content_type_to_file_ext)
 jinja_const('fe2ct', file_ext_to_content_type)
 jinja_const('google_users', users)
 
-# FIXME:
-#jinja_const('feedburner_id', 'journal-ma')
-#jinja_const('disqus_forum', 'devjma')
-
-#import usersettings as us
-#us.AUTHOR, us.AUTHOR_EMAIL = us.ADMINS[0]
-#us.SNAIL_ADDRESS = us.AUTHOR_SNAIL
-#jinja_const('SETTINGS', us)
-# END FIXME
-
-
 ################################################################################
 # application
 ################################################################################
@@ -76,13 +66,17 @@ jinja_const('google_users', users)
 def application(environ, start_response):
     local.request = request = jinja_const('request', Request(environ) )
     settings = AppSettings()
-    jinja_const('app_settings', settings)
     m = rxc.match(request.url)
     m = m.groupdict()
-    if not any([h.endswith(m['host']) for h in settings.hosts]):
+    if not any([m['host'].endswith(h) for h in settings.hosts]):
         redir = '%s%s%s' % (m['protocol'], settings.hosts[0], m['query'])
         return redirect(redir)
     response = None
+    layout_const('app_settings', jinja_const('app_settings', settings))
+    for nut in settings.nuts:
+        layout_const('%s_settings' % nut,jinja_const('%s_settings' % nut,\
+                     getattr(__import__('hazel.nuts.%s' % nut, \
+                                fromlist=['hazel.nuts']), 'NutSettings')))
     update_environment()
     local.adapter = adapter = local.url_map.bind_to_environ(environ)
     response = adapter.dispatch(lambda e, v: local.views[e](request, **v),
@@ -95,18 +89,14 @@ def application(environ, start_response):
 ################################################################################
 def main():
     appSettings = AppSettings()
-    template_paths = [path.join(base_path, 'templates')]
-    template_paths.extend([path.join(base_path, 'nuts', nut, 'templates')\
-                           for nut in appSettings.nuts])
+    template_paths = [path.join(base_path, 'templates')]\
+                   + [path.join(base_path, 'nuts', nut, 'templates')\
+                      for nut in appSettings.nuts]
     local.jinja_env = Environment(loader=FileSystemLoader(template_paths),
                                   extensions=['jinja2.ext.do'])
     local.layout_env = Environment(loader=LayoutLoader())
-    for nut in appSettings.nuts:
-        try: exec "from hazel.nuts.%s import setup; setup()" % nut
-        except: pass
     # at this point all other modules should have been loaded
     local.url_map, local.views = build_urls()
-    update_environment();
     run_wsgi_app(application)
 
 if __name__ == "__main__":

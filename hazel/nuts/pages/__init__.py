@@ -32,5 +32,6 @@ def handle_form_data(form):
         settings.put()
         invalidate_urls()
 
+import views
 
 __all__ = ['NutSettings']

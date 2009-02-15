@@ -1,5 +1,8 @@
+1. create a `files` nut
+2. create a `articles` nut
+3. add and admin_index.html file
+4. fix the path issue on the admin
+
 - add caching!
-
 - bable?
-
 - merge the wiki that drives agrar-immo.de etc.

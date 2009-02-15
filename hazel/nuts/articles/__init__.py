@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-
-from logging import info
-
 from wtforms import Form
 from wtforms import TextField
 from wtforms import SubmitField
@@ -22,7 +19,6 @@ defaults = { 'subdomain': '',
 NutSettings = lambda : Settings.get_or_create('settings:articles', **defaults)
 
 def setup():
-    info('injecting articles_settings')
     jinja_const('articles_settings', NutSettings())
 
 class SettingsForm(Form):
@@ -43,5 +39,7 @@ def handle_form_data(form):
     if dirty:
         settings.put()
         invalidate_urls()
+
+import views
 
 __all__ = ['NutSettings']

@@ -16,7 +16,7 @@ def date(value, format='%H:%M / %d-%m-%Y'):
 @layout_filter
 def markdown(text,*args):
     try:
-        import lib.markdown2
+        from lib import markdown2
     except ImportError:
         info("Error in `markdown` filter: The Python markdown2 library isn't installed.")
         return text
@@ -61,7 +61,7 @@ def amp(text):
 @jinja_filter
 def caps(text):
     try:
-        import lib.smartypants
+        from lib import smartypants
     except ImportError:
         info("Error in `caps` filter: The Python SmartyPants library isn't installed.")
         return text

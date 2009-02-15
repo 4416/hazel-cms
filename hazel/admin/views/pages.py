@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
-from logging import info
 
 from google.appengine.api import users
 from google.appengine.ext import db
@@ -21,20 +20,6 @@ from hazel.models.pages import File
 from hazel.models.pages import Node
 from hazel.models.pages import Layout
 from hazel.util.net import Response
-
-
-fn = wtforms.fields.SelectField._selected
-def _fn(s,v):
-    info("- %s" % v)
-    try:
-        info("= %s" % s.data.key())
-    except:
-        info("= %s" % s.data)
-    info("> %s" % s.coerce(v))
-    res = fn(s,v)
-    info("=> %s" % res)
-    return res
-wtforms.fields.SelectField._selected = _fn
 
 ################################################################################
 # Views
@@ -104,10 +89,6 @@ def add(request, to=None):
                 return redirect('/admin/pages/', 301)
             if form.cont.data is True:
                 return redirect('/admin/pages/edit/%s' % page.get_key(), 301)
-        info(form.errors)
-        for name, block in blocks:
-            info(name)
-            info(block.errors)
 
     return render_template('pages/form.html', form=form, add=add, blocks=blocks)
 
@@ -142,7 +123,6 @@ def edit(request, key):
                     form.layout.data = None
                 else:
                     form.layout.data = Layout.get(form.layout.data.split(':',1)[1])
-                info(form.layout.data)
                 for block in node.blocks:
                     blocks[block.name].auto_populate(block)
                     keys.remove(block.name)
@@ -194,7 +174,6 @@ def add_folder(request):
         breadcrumb = form.breadcrumb.data
         state = form.state.data
         active = form.active.data
-        info(slug)
         if len(slug) < 1:
             slug = slugify(name)
         author = users.get_current_user()
@@ -210,17 +189,13 @@ def add_folder(request):
     return render_template('pages/form.html', form=form)
 
 def move(request, A, mode, B):
-    info("'%s'-%s-'%s'" % (A, mode, B))
     switch = { 'before': lambda x,y: Node.move(x, before=y),
                'after': lambda x,y: Node.move(x, after=y),
                'to': lambda x,y: Node.move(x, to=y) }
     switch[mode](A,B)
-    info("Done")
     return redirect('/admin/pages/', 301)
 
-
 def migrate(request):
-    
     for n in File.all():
         if len(n.ancestors) < 1:
             continue

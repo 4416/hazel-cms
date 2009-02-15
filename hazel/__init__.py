@@ -9,6 +9,7 @@ from wtforms import SubmitField
 from wtforms import IntegerField
 
 CACHE_KEY_URL = 'hazel:urls'
+admin_tabs = {}
 
 #TODO: 
 #      - missing imports
@@ -68,4 +69,6 @@ def handle_form_data(form):
         invalidate_urls()
 
 def invalidate_urls():
-    memcache.delete(CACHE_KEY_URL)
+    # caching temporarily disabled
+    pass
+#    memcache.delete(CACHE_KEY_URL)

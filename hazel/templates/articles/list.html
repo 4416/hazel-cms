@@ -6,8 +6,8 @@
 {%- endmacro %}
 
 {% set del = fff("delete") %}
-{% set delete = "admin/articles/delete" %}
-{% set edit = "admin/articles/edit" %}
+{% set delete = "nut:articles/delete" %}
+{% set edit = "nut:articles/edit" %}
 
 {% macro simple_list(items, p, n, id=None) %}
   <ul{% if id %} id="{{ id }}"{% endif %}>
@@ -45,11 +45,11 @@
   {% set p, n = None, None %}
   {% if prev and items|first %}
   {% set f = items|first %}
-  {% set p = link('admin/articles/list', 'prev', list=list, bookmark='-' + f.sort_key) %}
+  {% set p = link('nut:articles/list', 'prev', list=list, bookmark='-' + f.sort_key) %}
   {% endif %}
   {% if next and items|last %}
   {% set l = items|last %}
-  {% set n = link('admin/articles/list', 'next', list=list, bookmark=l.sort_key) %}
+  {% set n = link('nut:articles/list', 'next', list=list, bookmark=l.sort_key) %}
   {% endif %}
   {{ simple_list(items, p, n) }}
 {% endmacro %}
@@ -72,6 +72,6 @@
   {% endif %}
 
 
-Add a {{ link('admin/articles/add','new Article') }}.
+Add a {{ link('nut:articles/add','new Article') }}.
 </div>
 {% endblock %}
