@@ -9,12 +9,6 @@ from google.appengine.api import memcache
 from werkzeug import redirect
 import wtforms
 
-from hazel.models.pages import PAGE
-from hazel.models.pages import FOLDER
-from hazel.models.pages import File
-from hazel.models.pages import Node
-from hazel.models.pages import Layout
-from hazel.models.pages import Block
 from hazel.admin.forms import FolderForm, PageForm, ConfirmDeleteForm, BlockAddForm, BlockForm
 from hazel.admin.forms import LayoutForm, ConfirmDeleteLayoutForm
 
@@ -30,6 +24,13 @@ from hazel.util.tools import pager
 from hazel.util.net import Response
 
 from urls import expose, expose_admin
+
+from models import PAGE
+from models import FOLDER
+from models import Node
+from models import Layout
+from models import Block
+
 ################################################################################
 # Public Views
 @expose('/', defaults={'key': ''})

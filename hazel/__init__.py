@@ -3,6 +3,8 @@ import re
 
 from google.appengine.api import memcache
 
+from jinja2 import Environment
+
 from wtforms import Form
 from wtforms import TextField
 from wtforms import SubmitField
@@ -72,3 +74,8 @@ def invalidate_urls():
     # caching temporarily disabled
     pass
 #    memcache.delete(CACHE_KEY_URL)
+
+jinja_env = Environment(extensions=['jinja2.ext.do'])
+layout_env = Environment()
+
+__all__ = ('jinja_env', 'layout_env')

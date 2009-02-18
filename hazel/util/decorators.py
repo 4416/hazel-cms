@@ -10,20 +10,12 @@ from datetime import timedelta
 from google.appengine.api import users
 from google.appengine.api import memcache
 
-from werkzeug import LocalManager
-from werkzeug import Local
-
 from hazel.debug import utils
+from hazel.util import local
 
 from helper import render_template
-from manage import local
-
-Lfilter = {}
-Lglobal = {}
-Lconst  = {}
-Jfilter = {}
-Jglobal = {}
-Jconst  = {}
+from hazel import jinja_env
+from hazel import layout_env
 
 ################################################################################
 # DebuggedApplication Decorator
@@ -71,7 +63,7 @@ def memcached(fn):
 
 def layout_filter(x):
     def reg(name, fn):
-        Lfilter[name] = fn
+        layout_env.filters[name] = fn
         return fn
     if isinstance(x, StringTypes):
         return lambda fn: reg(x, fn)
@@ -79,7 +71,7 @@ def layout_filter(x):
 
 def jinja_filter(x):
     def reg(name, fn):
-        Jfilter[name] = fn
+        jinja_env.filters[name] = fn
         return fn
     if isinstance(x, StringTypes):
         return lambda fn: reg(x, fn)
@@ -87,7 +79,7 @@ def jinja_filter(x):
 
 def layout_global(x):
     def reg(name, fn):
-        Lglobal[name] = fn
+        layout_env.globals[name] = fn
         return fn
     if isinstance(x, StringTypes):
         return lambda fn: reg(x, fn)
@@ -95,24 +87,16 @@ def layout_global(x):
 
 def jinja_global(x):
     def reg(name, fn):
-        Jglobal[name] = fn
+        jinja_env.globals[name] = fn
         return fn
     if isinstance(x, StringTypes):
         return lambda fn: reg(x, fn)
     return reg(x.__name__, x)
 
 def layout_const(n,v):
-    Lconst[n] = v
+    layout_env.globals[n] = v
     return v
 
 def jinja_const(n,v):
-    Jconst[n] = v
+    jinja_env.globals[n] = v
     return v
-
-def update_environment():
-    local.layout_env.filters.update(Lfilter)
-    local.layout_env.globals.update(Lconst)
-    local.layout_env.globals.update(Lglobal)
-    local.jinja_env.filters.update(Jfilter)
-    local.jinja_env.globals.update(Jconst)
-    local.jinja_env.globals.update(Jglobal)

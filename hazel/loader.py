@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from jinja2 import BaseLoader, TemplateNotFound
-from models.pages import Layout
+from nuts.pages.models import Layout
 
 class LayoutLoader(BaseLoader):
     def get_source(self, environment, template):

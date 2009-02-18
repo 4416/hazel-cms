@@ -14,11 +14,11 @@ from hazel.util.helper import render_jinja
 from hazel.util.net import Response
 from hazel.util.tools import pager
 from hazel.util.tools import slugify
-from hazel.models.blog import Post
 from hazel.util.decorators import memcached
 from hazel.admin.forms import ArticleForm
 
 from urls import expose, expose_admin
+from models import Post
 ################################################################################
 # constants
 ################################################################################

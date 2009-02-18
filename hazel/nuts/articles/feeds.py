@@ -5,13 +5,14 @@ from datetime import datetime
 # lib
 from lib.atom import Feed
 # local
-from hazel.models.blog import Post
+from models import Post
 from hazel.util.helper import render_jinja
 from hazel.util.net import Response
 from hazel import NutSettings as AppSettings
 from hazel.nuts.articles import NutSettings
 # relative
-
+from urls import expose
+from hazel.util.decorators import memcached
 
 class MyFeed(Feed):
     appSettings = AppSettings()
@@ -44,7 +45,10 @@ class MyFeed(Feed):
         return {'type': 'html',
                 'xml:base': '%s/' % base_url },\
                 render_jinja('feed_content.html', object=item)
-
+    
+@expose('/feeds/<name>/')
+#@memcached
+#FIXME: needs some extra logic / invalidator!
 def show(request, name):
     if name.startswith('tag-'):
         qs = Post.pub().filter('topics = ', name[4:])

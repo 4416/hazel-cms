@@ -24,10 +24,9 @@ from werkzeug import redirect
 from jinja2 import Environment
 from jinja2 import FileSystemLoader
 
-from hazel.util.manage import manager
-from hazel.util.manage import local
+from hazel.util import manager
+from hazel.util import local
 from hazel.util.net import Request
-from hazel.util.decorators import update_environment
 from hazel.util.decorators import debugged
 from hazel.util.decorators import jinja_const
 from hazel.util.decorators import layout_const
@@ -38,6 +37,8 @@ from hazel.util import filter
 from hazel.urls import build_urls
 
 from hazel.loader import LayoutLoader
+from hazel import jinja_env
+from hazel import layout_env
 
 from hazel import NutSettings as AppSettings
 
@@ -64,7 +65,7 @@ jinja_const('google_users', users)
 @manager.middleware
 @responder
 def application(environ, start_response):
-    local.request = request = jinja_const('request', Request(environ) )
+    local.request = request = Request(environ)
     settings = AppSettings()
     m = rxc.match(request.url)
     m = m.groupdict()
@@ -80,7 +81,6 @@ def application(environ, start_response):
             layout_const('%s_settings' % nut, ns)
             jinja_const('%s_settings' % nut, ns)
 
-    update_environment()
     local.adapter = adapter = local.url_map.bind_to_environ(environ)
     response = adapter.dispatch(lambda e, v: local.views[e](request, **v),
                                 catch_http_exceptions=True)
@@ -95,9 +95,8 @@ def main():
     template_paths = [path.join(base_path, 'templates')]\
                    + [path.join(base_path, 'nuts', nut, 'templates')\
                       for nut in appSettings.nuts]
-    local.jinja_env = Environment(loader=FileSystemLoader(template_paths),
-                                  extensions=['jinja2.ext.do'])
-    local.layout_env = Environment(loader=LayoutLoader())
+    jinja_env.loader=FileSystemLoader(template_paths)
+    layout_env.loader=LayoutLoader()
     # at this point all other modules should have been loaded
     local.url_map, local.views = build_urls()
     run_wsgi_app(application)

@@ -15,10 +15,13 @@ from hazel.util.decorators import memcached
 from hazel.util.constants import file_ext_to_content_type
 from hazel.util.tools import slugify, rec
 from hazel.util.globals import url_for
-from hazel.models.pages import File, FOLDER, FILE, Node
 from hazel.admin.forms import FolderForm, FileForm, FileEditForm, FileConfirmDeleteForm
 
 from urls import expose, expose_admin
+
+from models import File
+from models import FOLDER
+from models import FILE
 
 # in case we need the list function
 _list = list
@@ -105,7 +108,7 @@ def delete(request, key):
             File.drop(key)
             return redirect(url_for('nut:files/list'), 301)
         if form.cascade.data is True:
-            Node.drop(key, cascade=True)
+            File.drop(key, cascade=True)
             return redirect(url_for('nut:files/list'), 301)
     file = File.get(key)
     files = dict([(n.get_key(), n) for n in File.all().filter("ancestors = ", key)])

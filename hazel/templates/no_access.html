@@ -1,5 +1,9 @@
 {# -*- coding: utf-8 -*- #}
-{% extends 'base.html' %}
-{% block body %}
-Admin only!
-{% endblock %}
+{# {% extends 'base.html' %} #}
+<html>
+<body>
+Sorry, this page requires Admin access.
+<a href="{{ google_users.create_login_url('/admin/pages/p/')
+}}">login</a>
+</body>
+</html>

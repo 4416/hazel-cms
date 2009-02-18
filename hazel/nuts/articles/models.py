@@ -121,8 +121,8 @@ class Post(db.Model):
         if key.startswith('Published:'):
             key = key[10:]
         if not unquote_url:
-            return url_for('articles/show', key=key)
-        return unquote(url_for('articles/show', key=key))
+            return url_for('nut:articles/show', key=key)
+        return unquote(url_for('nut:articles/show', key=key))
 
     def is_cached(self):
         return memcache.get(self.get_absolute_url(unquote_url=True)) is not None

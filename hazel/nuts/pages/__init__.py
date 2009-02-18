@@ -6,7 +6,13 @@ from wtforms.validators import regexp
 
 from hazel.models.settings import Settings
 
+from hazel.util.tools import simple_rec
+from hazel.util.decorators import jinja_global
+from hazel.util.decorators import layout_global
 from hazel import invalidate_urls
+
+from models import Node
+from models import PUBLISHED
 
 defaults = { 'subdomain': '',
              'submount': '/pages' }
@@ -31,6 +37,25 @@ def handle_form_data(form):
     if dirty:
         settings.put()
         invalidate_urls()
+
+
+################################################################################
+# exposed functions
+@layout_global
+def menu(root='root'):
+    base = Node.all().filter('name = ', root).get()
+    qs = Node.all().filter('active = ', True).filter('state = ', PUBLISHED)
+    l = len(base.path)
+    nodes = dict([(n.get_key(), n) for n in qs if n.path.startswith(base.path)])
+    node = simple_rec(base, nodes)
+    return node
+
+@layout_global('page')
+def page_path(slug):
+    p = Node.all().filter('slug = ', slug).get()
+    if p is None:
+        return u''
+    return p.get_absolute_url()
 
 import views
 
