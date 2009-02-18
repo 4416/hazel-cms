@@ -11,10 +11,10 @@
 {% set down = fff("arrow_down") %}
 {% set add = fff("page_add") %}
 {% set del = fff("delete") %}
-{% set move = "admin/files/move" %}
-{% set add_to = "admin/files/add_to" %}
-{% set delete = "admin/files/delete" %}
-{% set edit = "admin/files/edit" %}
+{% set move = "nut:files/move" %}
+{% set add_to = "nut:files/add_to" %}
+{% set delete = "nut:files/delete" %}
+{% set edit = "nut:files/edit" %}
 
 {% macro rec(node, id=None) %}
   {% if id %}<ul id="{{ id }}">{% else %}<ul>{% endif %}
@@ -61,8 +61,8 @@
 {{ rec(root) }}
 {% endif %}
 
-Upload a {{ link('admin/files/add', 'new file') }}
-<small>or</small> Create a {{ link('admin/files/add_folder', 'new folder') }}
+Upload a {{ link('nut:files/add', 'new file') }}
+<small>or</small> Create a {{ link('nut:files/add_folder', 'new folder') }}
 </div>
         <!-- end content -->
 {% endblock %}

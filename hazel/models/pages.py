@@ -151,7 +151,7 @@ class Block(db.Model):
 
 class File(AbsPathSMPNode, MethodMixin):
 
-    _endpoint = 'files/show'
+    _endpoint = 'nut:files/show'
 
     type = db.IntegerProperty(default=FOLDER, required=True)
     name = db.StringProperty(required=True, default='root')

@@ -74,9 +74,12 @@ def application(environ, start_response):
     response = None
     layout_const('app_settings', jinja_const('app_settings', settings))
     for nut in settings.nuts:
-        layout_const('%s_settings' % nut,jinja_const('%s_settings' % nut,\
-                     getattr(__import__('hazel.nuts.%s' % nut, \
-                                fromlist=['hazel.nuts']), 'NutSettings')))
+        ns = getattr(__import__('hazel.nuts.%s' % nut, \
+                                fromlist=['hazel.nuts']), 'NutSettings', None)
+        if ns:
+            layout_const('%s_settings' % nut, ns)
+            jinja_const('%s_settings' % nut, ns)
+
     update_environment()
     local.adapter = adapter = local.url_map.bind_to_environ(environ)
     response = adapter.dispatch(lambda e, v: local.views[e](request, **v),

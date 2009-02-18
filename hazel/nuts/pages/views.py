@@ -53,7 +53,7 @@ def show(request, key):
 
 ################################################################################
 # Admin Views
-@expose_admin('/', tab='Pages')
+@expose_admin('/p/', tab='Pages')
 def list_pages(request):
     nodes = dict([(n.get_key(), n) for n in Node.all()])
     root = None
@@ -66,8 +66,8 @@ def list_pages(request):
         root = rec(root, nodes)
     return render_template('pages/list.html', root=root)
 
-@expose_admin('/add/', defaults={'key': None})
-@expose_admin('/add/<key>/')
+@expose_admin('/p/add/', defaults={'key': None})
+@expose_admin('/p/add/<key>/')
 def add(request, key):
     """ add a new page
         to the set"""
@@ -125,7 +125,7 @@ def add(request, key):
 
     return render_template('pages/form.html', form=form, add=add, blocks=blocks)
 
-@expose_admin('/edit/<key>/')
+@expose_admin('/p/edit/<key>/')
 def edit(request, key):
     blocks = {}
     node = Node.get(key)
@@ -175,7 +175,7 @@ def edit(request, key):
                 form.layout.data = layout_val
     return render_template('pages/form.html', form=form, add=add, blocks=blocks.items(), mode='edit', node=node)
 
-@expose_admin('/delete/<key>/')
+@expose_admin('/p/delete/<key>/')
 def delete(request, key):
     form = ConfirmDeleteForm(request.form)
     if request.method == 'POST' and form.validate():
@@ -201,7 +201,7 @@ def delete(request, key):
     return render_template('pages/confirm_delete.html', form=form,
                            node=node)
 
-@expose_admin('/add_folder/')
+@expose_admin('/p/add_folder/')
 def add_folder(request):
     form = FolderForm(request.form)
     if request.method == 'POST' and form.validate():
@@ -224,7 +224,7 @@ def add_folder(request):
             return redirect(url_for('nut:pages/edit', key=page.get_key()), 301)
     return render_template('pages/form.html', form=form)
 
-@expose_admin('/move/<A>/<mode>/<B>/')
+@expose_admin('/p/move/<A>/<mode>/<B>/')
 def move(request, A, mode, B):
     switch = { 'before': lambda x,y: Node.move(x, before=y),
                'after': lambda x,y: Node.move(x, after=y),
@@ -239,12 +239,12 @@ def move(request, A, mode, B):
 ################################################################################
 # pub Views
 
-@expose_admin('/layouts/', tab='Layouts')
+@expose_admin('/l/', tab='Layouts')
 def list_layous(request):
     layouts = Layout.all().order('name')
     return render_template('layouts/list.html', layouts=layouts)
 
-@expose_admin('/layouts/add/')
+@expose_admin('/l/add/')
 def add_layout(request):
     form = LayoutForm(request.form)
     if request.method == "POST" and form.validate():
@@ -260,7 +260,7 @@ def add_layout(request):
             return redirect(url_for('nut:pages/edit', key=layout.key()), 301)
     return render_template('layouts/form.html', form=form)
 
-@expose_admin('/layouts/edit/<key>/')
+@expose_admin('/l/edit/<key>/')
 def edit_layout(request, key):
     layout = Layout.get(key)
     form = LayoutForm(request.form, obj=layout)
@@ -274,7 +274,7 @@ def edit_layout(request, key):
             return redirect(url_for('nut:pages/list_layouts'), 301)
     return render_template('layouts/form.html', form=form, layout=layout)
 
-@expose_admin('/layouts/delete/<key>/')
+@expose_admin('/l/delete/<key>/')
 def delete_layout(request, key):
     layout = Layout.get(key)
     form = ConfirmDeleteLayoutForm(request.form)
