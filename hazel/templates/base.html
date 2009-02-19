@@ -21,12 +21,12 @@
     <a href="/admin/">admin panel</a>
     <a href="{{ google_users.create_logout_url('/') }}">logout</a>
     {% else %}
-    <a href="{{ google_users.create_login_url('/admin/') }}">admin</a>
+    <a href="{{ google_users.create_login_url('/admin/pages/p/') }}">admin</a>
   {% endif %}
   </span>
     moritzangermann <a href="/">journal</a>
     <a href="/archive/">archive</a>
-    <a href="/fineprint">imprint</a>
+{#    <a href="/fineprint">imprint</a> #}
     {% if articles_settings.feedburner_id %}
     <a href="{{ articles_settings.feedburner_url }}">syndicate</a>
     {% else %}

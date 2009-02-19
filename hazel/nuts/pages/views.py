@@ -48,7 +48,7 @@ def show(request, key):
             "{%% block body %%} %s {%% endblock %%}" % page.body ]
     for block in page.blocks:
         string.append("{%% block %s %%} %s {%% endblock %%}" % (block.name, block.body))
-    resp = layout_response_from_string('\n'.join(string), page.content_type, title=page.name)
+    resp = layout_response_from_string('\n'.join(string), page.content_type, title=page.name, this=page)
     resp.expires = datetime.now() + timedelta(7)
     return resp
 

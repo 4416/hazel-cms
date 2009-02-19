@@ -99,8 +99,8 @@ def index(request):
         return redirect(quote((u'/%s' % latest.lookup).encode('utf-8')), 301)
     return render_template('empty.html')
 
-@memcached
 @expose('/<path:key>')
+@memcached
 def show(request, key):
     prevent_cache = False
     post = Post.get_by_key_name('Published:%s' % key)
@@ -109,7 +109,7 @@ def show(request, key):
         post = Post.get_by_key_name(key)
         prevent_cache = True
     if post:
-        resp = render_template('show_post.html', post=post)
+        resp = render_template('articles/show.html', post=post)
         resp.prevent_cache = prevent_cache
     else:
         resp = render_template('404.html')
@@ -174,28 +174,28 @@ def list(request):
                            published        = pub,
                            published_next   = pub_next)
 
-@expose_admin('/add')
+@expose_admin('/add/')
 def add(request):
     form = ArticleForm(request.form, obj=AutoNow(), prefix='create')
     if request.method == 'POST' and form.validate():
         key_name, kwds = prepare(form)
-        kwds['html'] = render_jinja('cache_body.html', body=kwds['body'])
+        # kwds['html'] = render_jinja('cache_body.html', body=kwds['body'])
         kwds['author'] = users.get_current_user()
         # lets see if we do not overwrite an existing item.
         created, post = create_entity(key_name, **kwds)
         if not created:
             return render_template('articles/form.html', form=form, status='error',msg='non-unique')
-        return redirect('/admin/articles/', 301)
+        return redirect(url_for('nut:articles/list'), 301)
     return render_template('articles/form.html', form=form)
 
-@expose_admin('/edit')
+@expose_admin('/edit/<key>/')
 def edit(request, key):
     post = Post.get_by_key_name(key)
     form = ArticleForm(request.form, obj=PostProxy(post), prefix='edit')
     status = False
     if request.method == 'POST' and form.validate():
         key_name, kwds = prepare(form)
-        kwds['html'] = render_jinja('cache_body.html', body=kwds['body'])
+#        kwds['html'] = render_jinja('cache_body.html', body=kwds['body'])
         if post.key().name() == key_name:
             post = update_entity(key_name, **kwds)
             status = 'Updated'
@@ -211,13 +211,13 @@ def edit(request, key):
             status = 'Updated'
         post.invalidate_cache()
         if form.save.data:
-            return redirect('/admin/articles/', 301)
+            return redirect(url_for('nut:articles/list'), 301)
     return render_template('articles/form.html', form=form, post=post, status=status)
 
-@expose_admin('/delete')
+@expose_admin('/delete/<key>/')
 def delete(request, key):
     post = Post.get_by_key_name(key)
     if request.method == 'POST':
         post.delete()
-        return redirect('/admin/', 301)
+        return redirect(url_for('nut:articles/list'), 301)
     return render_template('post_confirm_delete.html', post=post)

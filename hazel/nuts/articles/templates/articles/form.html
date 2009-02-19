@@ -5,9 +5,9 @@
 <h1>{% if mode and mode == 'edit' %}Edit{% else %}Add{% endif %} an
 Article</h1>
 {% if post %}
-{% set action = url_for('admin/articles/edit', key=post.get_key()) %}
+{% set action = url_for('nut:articles/edit', key=post.get_key()) %}
 {% else %}
-{% set action = url_for('admin/articles/add') %}
+{% set action = url_for('nut:articles/add') %}
 {% endif %}
 <form action="{{ action }}" method="post">
   <div id="tabs">
@@ -42,7 +42,7 @@ Article</h1>
   <p class="buttons">
     {{ form.save(class='button') }}
     {{ form.cont(class='button') }}
-    or <a href="/admin/articles">Cancel</a>
+    or {{ link('nut:articles/list','Cancel') }}
   </p>
 </form>
 <!-- end content -->

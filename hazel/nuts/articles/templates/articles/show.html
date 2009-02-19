@@ -27,7 +27,11 @@
     {% endfor %}
 </div>
 <div id="body" class="hyphenate">
-  {{ post.html }}
+  {% filter typogrify %}
+  {% filter markdown %}
+  {{ post.body }}
+  {% endfilter %}
+  {% endfilter %}
 </div>
 
 {% if app_settings.google_adsense_client %}

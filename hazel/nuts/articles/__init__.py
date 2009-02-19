@@ -5,7 +5,7 @@ from wtforms import SubmitField
 from wtforms.validators import url
 from wtforms.validators import regexp
 
-from hazel.models.settings import Settings
+from hazel.models import Settings
 from hazel.util.decorators import jinja_const
 
 from hazel import invalidate_urls

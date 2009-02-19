@@ -36,20 +36,20 @@ class MyFeed(Feed):
     feed_authors = [{'name': appSettings.admins[0][0], 'email': appSettings.admins[0][1]}]
     feed_links = [{'rel': 'alternate', 'href': '%s/' % base_url }]
 
-    item_id = lambda s, i: '%s,%s:/%s' % (base_tag, i.date, i.lookup)
+    item_id = lambda s, i: '%s,%s:/%s' % (s.base_tag, i.date, i.lookup)
     item_title = lambda s, i: i.title
     item_updated = lambda s, i: i.modified
     item_published = lambda s, i: i.pub_date
-    item_links = lambda s, i: [{'href': '%s/%s' % (base_url, i.lookup)}]
+    item_links = lambda s, i: [{'href': '%s/%s' % (s.base_url, i.lookup)}]
     def item_content(self, item):
         return {'type': 'html',
-                'xml:base': '%s/' % base_url },\
-                render_jinja('feed_content.html', object=item)
+                'xml:base': '%s/' % self.base_url },\
+                render_jinja('articles/feed_content.html', object=item)
     
 @expose('/feeds/<name>/')
 #@memcached
 #FIXME: needs some extra logic / invalidator!
-def show(request, name):
+def feed(request, name):
     if name.startswith('tag-'):
         qs = Post.pub().filter('topics = ', name[4:])
     else:
