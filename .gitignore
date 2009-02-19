@@ -3,5 +3,3 @@
 *.bak
 .#*
 .svn
-app.yaml
-usersettings.py
