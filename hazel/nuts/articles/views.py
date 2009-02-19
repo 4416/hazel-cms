@@ -135,7 +135,7 @@ def topic(request, tag):
 
 ################################################################################
 # Admin views
-@expose_admin('/list', tab='Articles')
+@expose_admin('/list/', tab='Articles')
 def list(request):
     from logging import info
     from datetime import datetime

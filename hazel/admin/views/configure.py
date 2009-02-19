@@ -5,6 +5,20 @@ from werkzeug import redirect
 from hazel.util.helper import render_template
 from hazel.util.globals import url_for
 
+def list(request):
+    from hazel import NutSettings as AppSettings
+    nuts = []
+    _nut = {'name': '__name__',
+            'title': '__title__',
+            'version': '__version__',
+            'admin': '__admin__',
+            'doc': '__doc__'}
+    for nut in AppSettings().nuts:
+        module = __import__('hazel.nuts.%s' % nut, fromlist=['hazel.nuts'])
+        nuts.append(dict(map(lambda (key, prop): (key, getattr(module, prop, None)),
+                             _nut.items())))
+    return render_template('admin/index.html', nuts=nuts)
+
 def nut(request):
     from hazel import NutSettings, SettingsForm, handle_form_data
     nuts = {'hazel' : {'settings' : NutSettings,

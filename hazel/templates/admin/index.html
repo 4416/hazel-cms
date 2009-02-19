@@ -1,0 +1,14 @@
+{# -*- coding: utf-8 -*- #}
+{% extends 'admin.html' %}
+
+{% block content %}
+Welcome to Hazel Admin Interface. The following nuts are at your
+service.
+
+{% for nut in nuts %}
+<h1>{% if nut.admin %}{{ link(nut.admin, nut.title) }}{% endif %}<em class="version">{{ version }}</em><small>{{
+nut.name }}</small></h1>
+<div class="nut-doc">{{ nut.doc }}</div>
+
+{% endfor %}
+{% endblock %}

@@ -15,7 +15,6 @@ rules = lambda : [
     Rule('/admin/',                           endpoint='admin/index'),
     Rule('/famfamfam/<file>',                 endpoint='famfamfam/get'),
     Rule('/admin/configure/',           endpoint='admin/configuration'),
-#    Rule('/admin/cache/',                     endpoint='admin/cache/list'),
 #    Rule('/admin/migrate/',                   endpoint='admin/migrate'),
 ]
 
@@ -24,7 +23,8 @@ def build_urls():
         'famfamfam/get' : famfamfam.get,
 #        'admin/cache/list'    : cache.list,
 #        'admin/migrate'       : pages.migrate,
-        'admin/configuration'     : configure.nut
+        'admin/configuration'     : configure.nut,
+        'admin/index'          : configure.list
     }
 
     # secure the admin area

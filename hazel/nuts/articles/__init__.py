@@ -1,4 +1,12 @@
 # -*- coding: utf-8 -*-
+
+"""The articles nut provides the logic for
+a default blog system"""
+
+__title__ = "Articles"
+__version__ = 0.1
+__admin__  = "nut:articles/list"
+
 from wtforms import Form
 from wtforms import TextField
 from wtforms import SubmitField
