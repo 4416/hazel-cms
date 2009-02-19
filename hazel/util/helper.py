@@ -22,5 +22,4 @@ def render_layout_from_string(string, **context):
                                                        **context)
 
 def layout_response_from_string(string, content_type='text/html', **context):
-    return Response(render_layout_from_string(string, request=local.request,
-                                              **context), mimetype=content_type)
+    return Response(render_layout_from_string(string, **context), mimetype=content_type)

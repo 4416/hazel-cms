@@ -66,18 +66,6 @@ class AutoNow(object):
         self.pub_date = datetime.now()
 
 ################################################################################
-# decorator
-################################################################################
-def require_admin(fn):
-    def _fn(request, *args, **kwargs):
-        from google.appengine.api import users
-        if not users.is_current_user_admin():
-            return render_template('no_access.html',request=request)
-        return fn(request, *args, **kwargs)
-    return _fn
-
-
-################################################################################
 # transactions
 ################################################################################
 
@@ -124,7 +112,7 @@ def show(request, key):
         resp = render_template('show_post.html', post=post)
         resp.prevent_cache = prevent_cache
     else:
-        resp = render_template('404.html', request=request)
+        resp = render_template('404.html')
         resp.prevent_cache = True
     return resp
 

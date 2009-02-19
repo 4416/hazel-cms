@@ -41,7 +41,7 @@ def debugged(app):
 def require_admin(fn):
     def _fn(request, *args, **kwargs):
         if not users.is_current_user_admin():
-            return render_template('no_access.html',request=request)
+            return render_template('no_access.html')
         return fn(request, *args, **kwargs)
     return _fn
 
