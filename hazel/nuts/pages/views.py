@@ -241,7 +241,7 @@ def move(request, A, mode, B):
 # pub Views
 
 @expose_admin('/l/', tab='Layouts')
-def list_layous(request):
+def list_layouts(request):
     layouts = Layout.all().order('name')
     return render_template('layouts/list.html', layouts=layouts)
 
