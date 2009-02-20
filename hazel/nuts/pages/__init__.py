@@ -48,20 +48,22 @@ def handle_form_data(form):
 ################################################################################
 # exposed functions
 @layout_global
-def menu(abs_path='/'):
+def menu(abs_path=''):
     base = Node.all().filter('abs_path = ', abs_path).get()
     qs = Node.all().filter('active = ', True).filter('state = ', PUBLISHED)
-    l = len(base.path)
-    nodes = dict([(n.get_key(), n) for n in qs if n.path.startswith(base.path)])
+    l = len(base.abs_path)
+    nodes = dict([(n.get_key(), n) for n in qs if n.abs_path.startswith(base.abs_path)])
     node = simple_rec(base, nodes)
     return node
 
 @layout_global('page')
-def page_path(slug):
-    p = Node.all().filter('slug = ', slug).get()
+def page_path(slug, **kwargs):
+    p = Node.all().filter('abs_path = ', slug).get()
+    if p is None:
+        p = Node.all().filter('slug = ', slug).get()
     if p is None:
         return u''
-    return p.get_absolute_url()
+    return p.get_absolute_url(**kwargs)
 
 import views
 

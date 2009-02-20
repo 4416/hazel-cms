@@ -47,7 +47,7 @@ class AbsPathSMPNode(SortedMPNode):
             return _node
         return db.run_in_transaction(txn, self)
 
-    def get_absolute_url(self):
+    def get_absolute_url(self, **kwargs):
         from hazel.util.globals import url_for
-        return url_for(self._endpoint, key=self.abs_path)
+        return url_for(self._endpoint, key=self.abs_path, **kwargs)
 
