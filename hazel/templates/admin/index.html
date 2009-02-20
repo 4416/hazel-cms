@@ -2,13 +2,22 @@
 {% extends 'admin.html' %}
 
 {% block content %}
-Welcome to Hazel Admin Interface. The following nuts are at your
-service.
+<h1>Hazel Administration Interface</h1>
+<div id="list">
+
+<p class="intro">Welcome to the administration interface of your hazel installment. The
+following nuts are at your service.</p>
 
 {% for nut in nuts %}
-<h1>{% if nut.admin %}{{ link(nut.admin, nut.title) }}{% endif %}<em class="version">{{ version }}</em><small>{{
-nut.name }}</small></h1>
-<div class="nut-doc">{{ nut.doc }}</div>
+<div id="list-header"><small style="float:right">{{
+nut.name }}</small>{{ nut.title }} <em class="version">ver. {{ nut.version }}</em></div>
+{% if nut.doc %}
+<div class="nut-doc">
+  <p>{{ nut.doc }}</p>
+{% if nut.admin %} Go to this nuts {{ link(nut.admin, 'administration panel') }}{% endif %}
+</div>
+{% endif %}
 
 {% endfor %}
+</div>
 {% endblock %}

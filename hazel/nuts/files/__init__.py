@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
+"""The file nut allows you to upload static media to you system. It also contains a convinient method to link to the files in you shelf, which will always point to the right url."""
+
+__title__ = "Filebox"
+__version__ = 0.5
+__admin__ = "nut:files/list"
+
 from wtforms import Form
 from wtforms import TextField
 from wtforms import SubmitField

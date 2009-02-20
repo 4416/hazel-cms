@@ -411,7 +411,30 @@ div.cache {
 }
 
 #list li {
-	font-weight: light;
+	font-weight: lighter;
+}
+
+#list-header em.version {
+	color: #ccc;
+	font-weight: normal;
+	font-style: normal;
+}
+
+#list div.nut-doc {
+	padding: 3px 1em 10px;
+}
+#list div.nut-doc p {
+	font-style: italic;
+	color: #222;
+	margin: 0;
+	padding-bottom: 5px;
+}
+
+#list-header small {
+	font-size: .7em;
+	display: block;
+	line-height: 2em;
+	vertical-align: middle;
 }
 
 .modify > img {

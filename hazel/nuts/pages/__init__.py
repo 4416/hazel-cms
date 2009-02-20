@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
+"""The pages nut enables you a rich set of layout and page options."""
+
+__title__ = "Pages with layouts"
+__version__ = 0.2
+__admin__ = "nut:pages/list_pages"
+
 from wtforms import Form
 from wtforms import TextField
 from wtforms import SubmitField
