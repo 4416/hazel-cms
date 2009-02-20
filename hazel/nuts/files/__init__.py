@@ -27,7 +27,9 @@ NutSettings = lambda : Settings.get_or_create('settings:files', **defaults)
 
 @layout_global('file')
 def file_path(slug):
-    f = File.all().filter('slug = ', slug).get()
+    f = File.all().filter('abs_path = ', slug).get()
+    if f is None:
+        f = File.all().filter('slug = ', slug).get()
     if f is None:
         return u''
     return f.get_absolute_url()

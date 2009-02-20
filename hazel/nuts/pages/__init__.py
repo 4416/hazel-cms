@@ -48,8 +48,8 @@ def handle_form_data(form):
 ################################################################################
 # exposed functions
 @layout_global
-def menu(root='root'):
-    base = Node.all().filter('name = ', root).get()
+def menu(abs_path='/'):
+    base = Node.all().filter('abs_path = ', abs_path).get()
     qs = Node.all().filter('active = ', True).filter('state = ', PUBLISHED)
     l = len(base.path)
     nodes = dict([(n.get_key(), n) for n in qs if n.path.startswith(base.path)])
