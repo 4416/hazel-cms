@@ -9,10 +9,15 @@
     <div>Statistics</div>
     </div>
 <ul>
+  {% if cache.hits %}
+  {% set hits = cache.hits %}
+  {% else %}
+  {% set hits = 0 %}
+  {% endif %}
   {% set base = cache.hits + cache.misses %}
   <li> Hit ratio:
-  {% if base > 0 %}{{ (100 * cache.hits / base)|int }}{% else %}0{%endif%}% ({{
-  cache.hits }} hits and {{ cache.misses }} misses)
+  {% if base > 0 %}{{ (100 * hits / base)|int }}{% else %}0{%endif%}% ({{
+  hits }} hits and {{ cache.misses }} misses)
   </li>
   <li>Size of cache: {{ cache['items'] }} items, {{ cache.bytes }}
   bytes</li>

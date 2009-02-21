@@ -35,6 +35,8 @@ users.User.fullname = lambda self: get_author_for_user(self).fullname
 class Post(db.Model):
     """Basic Blog post"""
 
+    _endpoint = 'nut:articles/show'
+
     @classmethod
     def _s(cls):
         return cls.all().order('-sort_key')
@@ -121,13 +123,19 @@ class Post(db.Model):
         if key.startswith('Published:'):
             key = key[10:]
         if not unquote_url:
-            return url_for('nut:articles/show', key=key)
-        return unquote(url_for('nut:articles/show', key=key))
+            return url_for(self._endpoint, key=key)
+        return unquote(url_for(self._endpoint, key=key))
+
+    def cache_key(self):
+        key = self.get_key_name()
+        if key.startswith('Published:'):
+            key = key[10:]        
+        return url_for(self._endpoint, _external=True, key=key)
 
     def is_cached(self):
-        return memcache.get(self.get_absolute_url(unquote_url=True)) is not None
+        return memcache.get(self.cache_key()) is not None
 
     def invalidate_cache(self):
         for i in range(2):
-            if memcache.delete(self.get_absolute_url(unquote_url=True)) > 0:
+            if memcache.delete(self.cache_key()) > 0:
                 break

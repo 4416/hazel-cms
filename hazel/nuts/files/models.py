@@ -6,6 +6,8 @@ from hazel.models import CacheUtilMixin
 
 from hazel.util.constants import content_type_to_file_ext
 
+from hazel.util.globals import url_for
+
 HIDDEN    = 0
 DRAFT     = 1
 PUBLISHED = 2
@@ -45,8 +47,11 @@ class File(AbsPathSMPNode, CacheUtilMixin):
 
 
     def get_absolute_url(self):
-        from hazel.util.globals import url_for
         if self.abs_path is not None:
             return url_for(self._endpoint, key=self.abs_path,
                            type=content_type_to_file_ext[self.content_type])
         return ''
+
+    def cache_key(self):
+        return url_for(self._endpoint, _external=True, key=self.abs_path,
+                       type=content_type_to_file_ext[self.content_type])

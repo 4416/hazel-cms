@@ -21,6 +21,7 @@ from google.appengine.api import users
 
 from werkzeug import responder
 from werkzeug import redirect
+from werkzeug.exceptions import HTTPException
 from jinja2 import Environment
 from jinja2 import FileSystemLoader
 
@@ -82,10 +83,11 @@ def application(environ, start_response):
             jinja_const('%s_settings' % nut, ns)
 
     local.adapter = adapter = local.url_map.bind_to_environ(environ)
-    response = adapter.dispatch(lambda e, v: local.views[e](request, **v),
-                                catch_http_exceptions=True)
-
-    return response
+    try:
+        local.endpoint, local.args = endpoint, args = adapter.match()
+        return local.views[endpoint](request, **args)
+    except HTTPException, e:
+        return e(environ, start_response)
 
 ################################################################################
 # initiation

@@ -3,6 +3,8 @@ import re
 
 from google.appengine.ext import db
 
+from hazel.util.globals import url_for
+
 from hazel.models import AbsPathSMPNode
 from hazel.models import CacheUtilMixin
 
@@ -84,6 +86,12 @@ class Node(AbsPathSMPNode, CacheUtilMixin):
                     PUBLISHED: u'Published' }[self.state]
         else:
             return u'Disabled'
+
+    def get_ancestors(self):
+        return db.get(self.ancestors)
+
+    def cache_key(self):
+        return url_for(self._endpoint, _external=True, key=self.abs_path)
 
 class Block(db.Model):
     node = db.ReferenceProperty(Node, collection_name='blocks')

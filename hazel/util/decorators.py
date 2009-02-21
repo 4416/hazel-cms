@@ -49,7 +49,8 @@ def require_admin(fn):
 def memcached(fn):
     @wraps(fn)
     def _fn(request, *args, **kwargs):
-        key = request.path
+        key = local.adapter.build(local.endpoint, local.args, force_external=True)
+        info('cache: %s' % key)
         resp = memcache.get(key)
         if resp is not None:
             return resp

@@ -2,6 +2,7 @@
 from logging import info
 import re
 from decorators import jinja_filter, layout_filter
+from urllib2 import quote, unquote
 
 ################################################################################
 # Custom Filters
@@ -37,6 +38,16 @@ def truncatewords(text, num=10):
 @jinja_filter
 def striptags(text):
     return re.sub(r'<[^>]*?>', '', text)
+
+@jinja_filter
+@layout_filter
+def urlquote(text):
+    return quote(text)
+
+@jinja_filter
+@layout_filter
+def urlunquote(text):
+    return unquote(text)
 
 ################################################################################
 # Typogirfy Filters // Quick hack
