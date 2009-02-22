@@ -1,5 +1,5 @@
-﻿application: hazel-cms
-version: hazel-cms-1
+﻿application: journal-ma
+version: hazel-cms-2
 runtime: python
 api_version: 1
 

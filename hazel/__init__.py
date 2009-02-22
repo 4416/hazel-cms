@@ -9,6 +9,7 @@ from wtforms import Form
 from wtforms import TextField
 from wtforms import SubmitField
 from wtforms import IntegerField
+from wtforms import BooleanField
 
 CACHE_KEY_URL = 'hazel:urls'
 admin_tabs = {}
@@ -36,6 +37,7 @@ from models.settings import Settings
 defaults = { 'nuts': ['pages', 'articles'],
              'admins': ['Nobody <nobody@localhost>',],
              'hosts': ['localhost', 'appspot.com'],
+             'dp_highlighter': False,
              'google_analytics' : '',
              'google_adsense_client' : '',
              'google_adsense_slot' : '',
@@ -57,13 +59,17 @@ class SettingsForm(Form):
     google_adsense_width  = IntegerField('Google AdSense Width', [], u'the width value')
     google_adsense_height = IntegerField('Google AdSense Height', [], u'the height value')
     disqus_forum          = TextField('Disqus Forum ID', [], u'The name of the disqus forum to use for comments')
+    dp_highlighter        = BooleanField('Enable dp.SyntaxHighlighter')
     save = SubmitField(u'Save')
 
 def handle_form_data(form):
     settings = NutSettings()
     dirty = False
     for attr in defaults.keys():
-        if getattr(settings, attr) != getattr(form, attr).data:
+        if not hasattr(settings, attr):
+            setattr(settings, attr, getattr(form, attr).data)
+            dirty = True
+        elif getattr(settings, attr) != getattr(form, attr).data:
             setattr(settings, attr, getattr(form, attr).data)
             dirty = True        
     if dirty:

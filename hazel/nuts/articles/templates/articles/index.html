@@ -1,0 +1,35 @@
+{# -*- coding: utf-8 -*- #}
+{% extends 'articles/base.html' %}
+{% block body %}
+{% for post in posts %}
+<div class="post">
+<h1><a href="{{ post.get_absolute_url() }}"
+  rel="bookmark" title="{{ post.title|e }}">{{ post.title|typogrify }}</a></h1>
+
+<div class="entry">
+
+{% filter truncatewords %}
+{% filter typogrify %}
+  {% filter markdown %}
+  {{ post.body }}
+  {% endfilter %}
+{% endfilter %}
+{% endfilter %}
+
+</div>
+
+<p class="postmetadata"> {{ post.pub_date|date("%a %b %d %Y") }}, {{ post.city }}{% if post.city != post.country %} ({{ post.country }}){% endif %} | {% for topic in post.topics %}
+    <a href="{{ url_for('nut:articles/topic', tag=topic) }}">{{ topic }}</a>{% if not loop.last %}, {% endif %}
+    {% endfor %} | <a href="{{ post.get_absolute_url() }}#disqus_thread">View Comments</a></p>
+
+</div>
+{% endfor %}
+
+{#
+<div class="pagenavigation2">
+<div class="alignleft"><a href="http://themes.koch-werkstatt.de/page/2/" >&laquo; &Auml;ltere Beitr&auml;ge</a></div>
+
+<div class="alignright"></div>
+</div>
+#}
+{% endblock %}

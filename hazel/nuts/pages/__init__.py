@@ -48,6 +48,7 @@ def handle_form_data(form):
 ################################################################################
 # exposed functions
 @layout_global
+@jinja_global
 def menu(abs_path=''):
     base = Node.all().filter('abs_path = ', abs_path).get()
     qs = Node.all().filter('active = ', True).filter('state = ', PUBLISHED)
@@ -55,6 +56,15 @@ def menu(abs_path=''):
     nodes = dict([(n.get_key(), n) for n in qs if n.abs_path.startswith(base.abs_path)])
     node = simple_rec(base, nodes)
     return node
+
+@layout_global
+@jinja_global
+def page_list(abs_path=''):
+    base = Node.all().filter('abs_path = ', abs_path).get()
+    if base:
+        return Node.get(base.children)
+    else:
+        return None
 
 @layout_global('page')
 def page_path(slug, **kwargs):

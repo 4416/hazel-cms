@@ -14,7 +14,7 @@
   {% else %}
   {% set hits = 0 %}
   {% endif %}
-  {% set base = cache.hits + cache.misses %}
+  {% set base = hits + cache.misses %}
   <li> Hit ratio:
   {% if base > 0 %}{{ (100 * hits / base)|int }}{% else %}0{%endif%}% ({{
   hits }} hits and {{ cache.misses }} misses)

@@ -1,10 +1,52 @@
 {# -*- coding: utf-8 -*- #}
-{% extends "base.html" %}
+{% extends "articles/base.html" %}
 {% block title_ext %}{{ post.title|smartypants }} ({{ post.pub_date|date("%a %b %d %Y") }}) | {% endblock %}
 {% block body %}
 {% set prev = post.prev() %}
 {% set next = post.next() %}
-{% if next or prev %}
+
+<div class="post">
+<h1><a href="{{ post.get_abslute_url }}" rel="bookmark" title="{{ post.title }}">{{ post.title|smartypants }}</a></h1>
+
+           <div class="entrytext">
+{% filter typogrify %}
+  {% filter markdown %}
+  {{ post.body }}
+  {% endfilter %}
+{% endfilter %}
+
+             {#
+<p class="postmetadata2 alt">
+Geschrieben am Donnerstag, 20. November 2008 
+und abgelegt unter <a href="http://themes.koch-werkstatt.de/category/design/" title="Alle Artikel in Design ansehen" rel="category tag">Design</a>.
+Verfolgen Sie die Diskussion zu diesem Beitrag per <a href="http://themes.koch-werkstatt.de/2008/11/20/theme-browsercheck/feed/">RSS 2.0</a> Feed. 
+Sie können diesen Beitrag <a href="#respond">kommentieren</a> oder einen <a href="http://themes.koch-werkstatt.de/2008/11/20/theme-browsercheck/trackback/">Trackback</a> von Ihrer eigenen Webseite setzen.<br>
+<br class="clear">
+</p>
+#}
+
+<div>&nbsp;</div>
+<div class="navigation">
+<div class="alignleft">{% if prev %}« <a href="{{ prev.get_absolute_url() }}">{{ prev.title|smartypants }}</a>{% endif %}</div>
+<div class="alignright">{% if next %} <a href="{{ next.get_absolute_url() }}">{{ next.title|smartypants }}</a> »{% endif %}</div>
+</div>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+
+{% if app_settings.disqus_forum %}
+<!-- DISQUS -->
+<div>
+<div id="disqus_thread"></div>
+<noscript><a href="http://{{ app_settings.disqus_forum }}.disqus.com/?url=ref">View the discussion thread.</a></noscript><a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+<!-- DISQUS END -->
+{% endif %}
+</div>
+</div>
+{% endblock %}
+
+{#
+
 <hr style="border:0; border-bottom: 1px solid #ddd">
 <div id="post_nav" style="text-align:right">
   {% if next %}
@@ -59,4 +101,4 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
 </div>
 <!-- DISQUS END -->
 {% endif %}
-{% endblock %}
+#}

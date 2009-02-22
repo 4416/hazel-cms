@@ -1,0 +1,38 @@
+{# -*- coding: utf-8 -*- #}
+{% extends 'articles/base.html' %}
+{% block title_ext %} Archive | {% endblock %}
+{% block body %}
+
+{% if tag %}
+<h4>Archive on ‘{{ tag }}‘</h4>
+{% else %}
+<h4>Generic archive</h1>
+{% endif %}
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+  {% for post in posts %}
+		<div class="post">
+				<h1><a href="{{ post.get_absolute_url() }}"
+          rel="bookmark">{{ post.title|typogrify }}</a></h1>
+				<div class="entry">
+                  {% filter truncatewords %}
+                  {% filter markdown %}
+                  {{ post.body }}
+                  {% endfilter %}
+                  {% endfilter %}
+                  </div>
+<p class="postmetadata"> {{ post.pub_date|date("%a %b %d %Y") }}, {{ post.city }}{% if post.city != post.country %} ({{ post.country }}){% endif %} | {% for topic in post.topics %}
+    <a href="{{ url_for('nut:articles/topic', tag=topic) }}">{{ topic }}</a>{% if not loop.last %}, {% endif %}
+    {% endfor %} | <a href="{{ post.get_absolute_url() }}#disqus_thread">View Comments</a></p>
+
+                  </div>
+  {% endfor %}
+      {% if prev %}
+      {% set f = posts|first %}
+      &larr; <a href="?bookmark=-{{ f.sort_key }}">previous</a>
+      {% endif %}
+      {% if next %}
+      {% set l = posts|last %}
+      <a href="?bookmark={{ l.sort_key }}">next</a> &rarr;
+      {% endif %}
+{% endblock %}

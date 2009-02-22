@@ -16,6 +16,7 @@ from hazel.util.tools import pager
 from hazel.util.tools import slugify
 from hazel.util.decorators import memcached
 from hazel.admin.forms import ArticleForm
+from hazel.util.globals import url_for
 
 from urls import expose, expose_admin
 from models import Post
@@ -94,6 +95,9 @@ def update_entity(key_name, **kwds):
 
 @expose('/')
 def index(request):
+    latest = Post.pub().fetch(5)
+    # latest.reverse()
+    return render_template('articles/index.html', posts=latest)
     latest = Post.pub().get()
     if latest:
         return redirect(quote((u'/%s' % latest.lookup).encode('utf-8')), 301)
@@ -116,6 +120,11 @@ def show(request, key):
         resp.prevent_cache = True
     return resp
 
+@expose('/search/')
+@memcached
+def search(request):
+    return render_template('articles/search.html');
+
 @expose('/archive/', defaults={ 'tag': None })
 @expose('/topic/<tag>/')
 def topic(request, tag):
@@ -128,7 +137,7 @@ def topic(request, tag):
                               lambda bm: qs.filter('sort_key <', bm),
                               lambda bm: rqs.filter('sort_key >', bm),
                               bookmark=request.args.get('bookmark', None))
-    return render_template('post_list.html',
+    return render_template('articles/archive.html',
                            prev=prev, next=next,
                            posts = posts,
                            tag=tag)
@@ -188,7 +197,7 @@ def add(request):
         return redirect(url_for('nut:articles/list'), 301)
     return render_template('articles/form.html', form=form)
 
-@expose_admin('/edit/<key>/')
+@expose_admin('/edit/<path:key>/')
 def edit(request, key):
     post = Post.get_by_key_name(key)
     form = ArticleForm(request.form, obj=PostProxy(post), prefix='edit')

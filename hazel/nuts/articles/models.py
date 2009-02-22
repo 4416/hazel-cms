@@ -103,7 +103,7 @@ class Post(db.Model):
         return Post.pub().filter('sort_key <', self.sort_key).get()
 
     def prev(self):
-        return Post.pub().filter('sort_key >', self.sort_key).get()
+        return Post.rpub().filter('sort_key >', self.sort_key).get()
 
     def get_key_name(self):
         return self.key().id_or_name()

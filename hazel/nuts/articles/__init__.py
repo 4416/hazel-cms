@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """The articles nut provides the logic for
-a default blog system"""
+a basic blog system. """
 
 __title__ = "Articles"
 __version__ = 0.1
@@ -15,8 +15,11 @@ from wtforms.validators import regexp
 
 from hazel.models import Settings
 from hazel.util.decorators import jinja_const
+from hazel.util.decorators import jinja_global
 
 from hazel import invalidate_urls
+
+from models import Post
 
 defaults = { 'subdomain': '',
              'submount' : '',
@@ -47,6 +50,12 @@ def handle_form_data(form):
     if dirty:
         settings.put()
         invalidate_urls()
+
+@jinja_global
+def latest(n=5):
+    items = Post.pub().fetch(n)
+    #items.reverse()
+    return items
 
 import views
 import feeds

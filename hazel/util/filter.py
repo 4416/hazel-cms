@@ -25,7 +25,7 @@ def markdown(text,*args):
 
 ## truncatewords (from django)
 @jinja_filter
-def truncatewords(text, num=10):
+def truncatewords(text, num=40):
     words = text.split()
     if len(words) <= num:
         return text
@@ -149,7 +149,7 @@ def initial_quotes(text):
 @jinja_filter
 def smartypants(text):
     try:
-        import smartypants
+        from lib import smartypants
     except ImportError:
         info("Error in `smartypants` filter: The Python smartypants library isn't installed.")
         return text
