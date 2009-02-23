@@ -90,8 +90,9 @@ def application(environ, start_response):
         return res
     except HTTPException, e:
         return e(environ, start_response)
-    except:
-        return NotFound(environ, start_response)
+    except Exception, e:
+        info(e)
+        return NotFound()
 
 
 ################################################################################

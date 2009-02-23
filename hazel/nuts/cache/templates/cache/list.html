@@ -8,24 +8,21 @@
   <div id="list-header">
     <div>Statistics</div>
     </div>
+    {# the following code requires ``cache`` to be not None #}
+  {% if cache %}
 <ul>
-  {% if cache.hits %}
-  {% set hits = cache.hits %}
-  {% else %}
-  {% set hits = 0 %}
-  {% endif %}
-  {% set base = hits + cache.misses %}
+  {% set base = cache.hits + cache.misses %}
   <li> Hit ratio:
-  {% if base > 0 %}{{ (100 * hits / base)|int }}{% else %}0{%endif%}% ({{
-  hits }} hits and {{ cache.misses }} misses)
+  {% if base > 0 %}{{ (100 * cache.hits / base)|int }}{% else %}0{%endif%}% ({{
+  cache.hits }} hits and {{ cache.misses }} misses)
   </li>
   <li>Size of cache: {{ cache['items'] }} items, {{ cache.bytes }}
   bytes</li>
   <li>
   {% if cache['items'] > 0 %}
-{% set seconds = (cache.oldest_item_age % 60 )|int %}
-{% set minutes = (cache.oldest_item_age % 3600 / 60)|int  %}
-{% set hours = (cache.oldest_item_age / 3600 )|int %}
+{% set seconds = (cache.oldest_item_age % 60 ) %}
+{% set minutes = (cache.oldest_item_age % 3600 / 60)  %}
+{% set hours = (cache.oldest_item_age / 3600 ) %}
 Cache contains items up to
 {% if hours > 0 %}{{ hours }} hours and{% endif %}
 {% if minutes > 0 %}{{ minutes }} minutes{% endif %} old.
@@ -35,5 +32,8 @@ Cache contains items up to
   </li>
 </ul>
 <a href="?flush=true">clear cache</a>
+{% else %}
+Looks like your cache is empty
+{% endif %}
 </div>
 {% endblock %}
