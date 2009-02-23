@@ -80,6 +80,7 @@ def application(environ, start_response):
         ns = getattr(__import__('hazel.nuts.%s' % nut, \
                                 fromlist=['hazel.nuts']), 'NutSettings', None)
         if ns:
+            ns = ns()
             layout_const('%s_settings' % nut, ns)
             jinja_const('%s_settings' % nut, ns)
 

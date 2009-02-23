@@ -16,8 +16,10 @@
           rel="bookmark">{{ post.title|typogrify }}</a></h1>
 				<div class="entry">
                   {% filter truncatewords %}
+                  {% filter striptags %}
                   {% filter markdown %}
                   {{ post.body }}
+                  {% endfilter %}
                   {% endfilter %}
                   {% endfilter %}
                   </div>

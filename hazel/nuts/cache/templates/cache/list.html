@@ -20,9 +20,9 @@
   bytes</li>
   <li>
   {% if cache['items'] > 0 %}
-{% set seconds = (cache.oldest_item_age % 60 ) %}
-{% set minutes = (cache.oldest_item_age % 3600 / 60)  %}
-{% set hours = (cache.oldest_item_age / 3600 ) %}
+{% set seconds = (cache.oldest_item_age % 60 )|int %}
+{% set minutes = (cache.oldest_item_age % 3600 / 60)|int  %}
+{% set hours = (cache.oldest_item_age / 3600 )|int %}
 Cache contains items up to
 {% if hours > 0 %}{{ hours }} hours and{% endif %}
 {% if minutes > 0 %}{{ minutes }} minutes{% endif %} old.

@@ -10,9 +10,11 @@
 
 {% filter truncatewords %}
 {% filter typogrify %}
+{% filter striptags %}
   {% filter markdown %}
   {{ post.body }}
   {% endfilter %}
+{% endfilter %}
 {% endfilter %}
 {% endfilter %}
 

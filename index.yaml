@@ -17,7 +17,7 @@ indexes:
   - name: lookup
     direction: desc
 
-# Used 38 times in query history.
+# Unused in query history -- copied from input.
 - kind: Post
   properties:
   - name: published
@@ -56,20 +56,20 @@ indexes:
   - name: lookup
     direction: desc
 
-# Used 27 times in query history.
+# Unused in query history -- copied from input.
 - kind: Post
   properties:
   - name: published
   - name: sort_key
 
-# Used 1044 times in query history.
+# Used 34 times in query history.
 - kind: Post
   properties:
   - name: published
   - name: sort_key
     direction: desc
 
-# Used 3 times in query history.
+# Unused in query history -- copied from input.
 - kind: Post
   properties:
   - name: published
@@ -78,7 +78,7 @@ indexes:
   - name: sort_key
     direction: desc
 
-# Used 2 times in query history.
+# Unused in query history -- copied from input.
 - kind: Post
   properties:
   - name: published
@@ -86,7 +86,7 @@ indexes:
   - name: sort_key
     direction: desc
 
-# Used 6 times in query history.
+# Unused in query history -- copied from input.
 - kind: Post
   properties:
   - name: published

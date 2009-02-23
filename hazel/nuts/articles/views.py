@@ -223,7 +223,7 @@ def edit(request, key):
             return redirect(url_for('nut:articles/list'), 301)
     return render_template('articles/form.html', form=form, post=post, status=status)
 
-@expose_admin('/delete/<key>/')
+@expose_admin('/delete/<path:key>/')
 def delete(request, key):
     post = Post.get_by_key_name(key)
     if request.method == 'POST':

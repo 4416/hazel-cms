@@ -10,6 +10,7 @@ __admin__  = "nut:articles/list"
 from wtforms import Form
 from wtforms import TextField
 from wtforms import SubmitField
+from wtforms import BooleanField
 from wtforms.validators import url
 from wtforms.validators import regexp
 
@@ -25,7 +26,8 @@ defaults = { 'subdomain': '',
              'submount' : '',
              'title'    : '',
              'subtitle' : '',
-             'feedburner_url': '' }
+             'feedburner_url': '',
+             'feedburner_subscribe_by_email': False}
 
 NutSettings = lambda : Settings.get_or_create('settings:articles', **defaults)
 
@@ -38,13 +40,14 @@ class SettingsForm(Form):
     title = TextField('Title', [], u'This is your Blogs title')
     subtitle = TextField('Subtitle', [], u'This is your Blogs subtitle')
     feedburner_url = TextField('Feedburner URL', [url], u'If you use feedburner to enhance your feed, enter your burned feed url here.')
+    feedburner_subscribe_by_email = BooleanField('Enable Feedburners Email Subscription')
     save = SubmitField(u'Save')
 
 def handle_form_data(form):
     settings = NutSettings()
     dirty = False
     for attr in defaults.keys():
-        if getattr(settings, attr) != getattr(form, attr).data:
+        if not hasattr(settings, attr) or getattr(settings, attr) != getattr(form, attr).data:
             setattr(settings, attr, getattr(form, attr).data)
             dirty = True
     if dirty:
