@@ -22,6 +22,7 @@ from google.appengine.api import users
 from werkzeug import responder
 from werkzeug import redirect
 from werkzeug.exceptions import HTTPException
+from werkzeug.routing import RequestRedirect
 from werkzeug.exceptions import NotFound
 from jinja2 import Environment
 from jinja2 import FileSystemLoader
@@ -86,15 +87,15 @@ def application(environ, start_response):
 
     local.adapter = adapter = local.url_map.bind_to_environ(environ)
     try:
-        local.endpoint, local.args = endpoint, args = adapter.match()
-        res = local.views[endpoint](request, **args)
-        return res
+        try:
+            local.endpoint, local.args = endpoint, args = adapter.match()
+        except RequestRedirect, e:
+            return e
+        return local.views[endpoint](request, **args)
     except HTTPException, e:
-        return e(environ, start_response)
+        return e
     except Exception, e:
-        info(e)
         return NotFound()
-
 
 ################################################################################
 # initiation
