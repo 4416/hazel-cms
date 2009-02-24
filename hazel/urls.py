@@ -15,17 +15,18 @@ rules = lambda : [
     Rule('/admin/',                           endpoint='admin/index'),
     Rule('/famfamfam/<file>',                 endpoint='famfamfam/get'),
     Rule('/admin/configure/',           endpoint='admin/configuration'),
-    Rule('/admin/pb/<kind>',            endpoint='admin/pb'),
-#    Rule('/admin/migrate/',                   endpoint='admin/migrate'),
+    Rule('/admin/eb/<kind>',            endpoint='admin/eb'),
+    Rule('/admin/eb_rec/',                    endpoint='admin/eb_rec'),
+    Rule('/admin/eb_fix/',                    endpoint='admin/eb_fix'),
 ]
 
 def build_urls():
     views = {
         'famfamfam/get' : famfamfam.get,
-#        'admin/cache/list'    : cache.list,
-#        'admin/migrate'       : pages.migrate,
         'admin/configuration'     : configure.nut,
-        'admin/pb'             : configure.pb,
+        'admin/eb'             : configure.eb,
+        'admin/eb_rec'              : configure.eb_rec,
+        'admin/eb_fix'               : configure.fix_nodes,
         'admin/index'          : configure.list
     }
 

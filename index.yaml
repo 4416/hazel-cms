@@ -56,13 +56,13 @@ indexes:
   - name: lookup
     direction: desc
 
-# Unused in query history -- copied from input.
+# Used 2 times in query history.
 - kind: Post
   properties:
   - name: published
   - name: sort_key
 
-# Used 8 times in query history.
+# Used 62 times in query history.
 - kind: Post
   properties:
   - name: published
