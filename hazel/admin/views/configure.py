@@ -48,3 +48,20 @@ def nut(request):
         updated = True
         return redirect(url_for('admin/configuration', message='updated'), 302)
     return render_template('configure.html', nuts=nuts, updated=updated)
+
+from hazel.util.net import Response
+from struct import pack
+from logging import info
+def pb(request, kind):
+    resp = Response(mimetype="application/protocol-buffer-set", content_type="application/protocol-buffer-set")
+    module, obj = kind.rsplit('.',1)
+    info(module)
+    info(obj)
+    mod = __import__(module, fromlist=[module.rsplit('.',1)])
+    info(mod)
+    model = getattr(mod,obj)
+    for e in model.all():
+        pb = e._entity._ToPb()
+        resp.stream.write(pack('I',pb.ByteSize()))
+        resp.stream.write(pb.Encode())
+    return resp

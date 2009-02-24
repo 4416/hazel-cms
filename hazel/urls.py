@@ -15,6 +15,7 @@ rules = lambda : [
     Rule('/admin/',                           endpoint='admin/index'),
     Rule('/famfamfam/<file>',                 endpoint='famfamfam/get'),
     Rule('/admin/configure/',           endpoint='admin/configuration'),
+    Rule('/admin/pb/<kind>',            endpoint='admin/pb'),
 #    Rule('/admin/migrate/',                   endpoint='admin/migrate'),
 ]
 
@@ -24,6 +25,7 @@ def build_urls():
 #        'admin/cache/list'    : cache.list,
 #        'admin/migrate'       : pages.migrate,
         'admin/configuration'     : configure.nut,
+        'admin/pb'             : configure.pb,
         'admin/index'          : configure.list
     }
 
