@@ -50,7 +50,6 @@ def memcached(fn):
     @wraps(fn)
     def _fn(request, *args, **kwargs):
         key = local.adapter.build(local.endpoint, local.args, force_external=True)
-        info('cache: %s' % key)
         resp = memcache.get(key)
         if resp is not None:
             return resp
@@ -61,6 +60,39 @@ def memcached(fn):
         memcache.add(key, resp)
         return resp
     return _fn
+
+def memcached_for(time):
+    """ creates a memcached decorator for a given period.
+        valid values for t ar either absolute integers as seconds.
+        or strings like '4s', '3m', '1h', '10d', '4w'
+
+        This method may raise a ValueError or a KeyError if the
+        format is not accepted!
+    """
+    def deco(fn,t):
+        @wraps(fn)
+        def _fn(request, *args, **kwargs):
+            key = local.adapter.build(local.endpoint, local.args, force_external=True)
+            resp = memcache.get(key)
+            if resp is not None:
+                return resp
+            resp = fn(request, *args, **kwargs)
+            if getattr(resp,'prevent_cache', False):
+                return resp
+            resp.expires = datetime.now() + timedelta(7)
+            memcache.add(key, resp)
+            return resp
+        return resp
+    if isinstance(time, int):
+        return lambda fn: deco(fn,time)
+    time_map = { 'w': 7 * 24 * 60 * 60,
+                 'd':     24 * 60 * 60,
+                 'h':          60 * 60,
+                 'm':               60,
+                 's':                1 }
+    num, key = int(time[:-1]), time[-1]
+    return lambda fn: defo(fn, num * time_map[key])
+    
 
 def layout_filter(x):
     def reg(name, fn):
