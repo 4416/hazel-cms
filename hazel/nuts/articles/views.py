@@ -15,6 +15,7 @@ from hazel.util.net import Response
 from hazel.util.tools import pager
 from hazel.util.tools import slugify
 from hazel.util.decorators import memcached
+from hazel.util.decorators import memcached_for
 from hazel.admin.forms import ArticleForm
 from hazel.util.globals import url_for
 
@@ -94,6 +95,7 @@ def update_entity(key_name, **kwds):
 ################################################################################x
 
 @expose('/')
+@memcached_for('15m')
 def index(request):
     latest = Post.pub().fetch(5)
     # latest.reverse()
@@ -104,7 +106,7 @@ def index(request):
     return render_template('empty.html')
 
 @expose('/<path:key>')
-@memcached
+@memcached_for('15m')
 def show(request, key):
     prevent_cache = False
     post = Post.get_by_key_name('Published:%s' % key)
@@ -121,12 +123,13 @@ def show(request, key):
     return resp
 
 @expose('/search/')
-@memcached
+@memcached_for('15m')
 def search(request):
     return render_template('articles/search.html');
 
 @expose('/archive/', defaults={ 'tag': None })
 @expose('/topic/<tag>/')
+@memcached_for('15m')
 def topic(request, tag):
     qs = Post.pub()
     rqs = Post.rpub()

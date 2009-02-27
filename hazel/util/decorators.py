@@ -79,10 +79,10 @@ def memcached_for(time):
             resp = fn(request, *args, **kwargs)
             if getattr(resp,'prevent_cache', False):
                 return resp
-            resp.expires = datetime.now() + timedelta(7)
+            resp.expires = datetime.now() + timedelta(seconds=t)
             memcache.add(key, resp)
             return resp
-        return resp
+        return _fn
     if isinstance(time, int):
         return lambda fn: deco(fn,time)
     time_map = { 'w': 7 * 24 * 60 * 60,
@@ -91,7 +91,7 @@ def memcached_for(time):
                  'm':               60,
                  's':                1 }
     num, key = int(time[:-1]), time[-1]
-    return lambda fn: defo(fn, num * time_map[key])
+    return lambda fn: deco(fn, num * time_map[key])
     
 
 def layout_filter(x):

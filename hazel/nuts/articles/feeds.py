@@ -12,7 +12,7 @@ from hazel import NutSettings as AppSettings
 from hazel.nuts.articles import NutSettings
 # relative
 from urls import expose
-from hazel.util.decorators import memcached
+from hazel.util.decorators import memcached_for
 
 class MyFeed(Feed):
     appSettings = AppSettings()
@@ -47,8 +47,7 @@ class MyFeed(Feed):
                 render_jinja('articles/feed_content.html', object=item)
     
 @expose('/feeds/<name>/')
-#@memcached
-#FIXME: needs some extra logic / invalidator!
+@memcached_for('15m')
 def feed(request, name):
     if name.startswith('tag-'):
         qs = Post.pub().filter('topics = ', name[4:])
