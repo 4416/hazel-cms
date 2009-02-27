@@ -99,11 +99,11 @@ def update_entity(key_name, **kwds):
 def index(request):
     latest = Post.pub().fetch(5)
     # latest.reverse()
-    return render_template('articles/index.html', posts=latest)
+    return render_template('app:articles/index.html', posts=latest)
     latest = Post.pub().get()
     if latest:
         return redirect(quote((u'/%s' % latest.lookup).encode('utf-8')), 301)
-    return render_template('empty.html')
+    return render_template('app/empty.html')
 
 @expose('/<path:key>')
 @memcached_for('15m')
@@ -115,17 +115,17 @@ def show(request, key):
         post = Post.get_by_key_name(key)
         prevent_cache = True
     if post:
-        resp = render_template('articles/show.html', post=post)
+        resp = render_template('app:articles/show.html', post=post)
         resp.prevent_cache = prevent_cache
     else:
-        resp = render_template('404.html')
+        resp = render_template('app/404.html')
         resp.prevent_cache = True
     return resp
 
 @expose('/search/')
 @memcached_for('15m')
 def search(request):
-    return render_template('articles/search.html');
+    return render_template('app:articles/search.html');
 
 @expose('/archive/', defaults={ 'tag': None })
 @expose('/topic/<tag>/')
@@ -140,7 +140,7 @@ def topic(request, tag):
                               lambda bm: qs.filter('sort_key <', bm),
                               lambda bm: rqs.filter('sort_key >', bm),
                               bookmark=request.args.get('bookmark', None))
-    return render_template('articles/archive.html',
+    return render_template('app:articles/archive.html',
                            prev=prev, next=next,
                            posts = posts,
                            tag=tag)
@@ -175,7 +175,7 @@ def list(request):
                                    lambda bm: Post.runpub()\
                                                   .filter('sort_key >', bm),
                                    bookmark=unp_bm)
-    return render_template('articles/list.html',
+    return render_template('app:articles/list.html',
                            unpublished_prev = unp_prev,
                            unpublished      = unp,
                            unpublished_next = unp_next,
@@ -196,9 +196,9 @@ def add(request):
         # lets see if we do not overwrite an existing item.
         created, post = create_entity(key_name, **kwds)
         if not created:
-            return render_template('articles/form.html', form=form, status='error',msg='non-unique')
+            return render_template('app:articles/form.html', form=form, status='error',msg='non-unique')
         return redirect(url_for('nut:articles/list'), 301)
-    return render_template('articles/form.html', form=form)
+    return render_template('app:articles/form.html', form=form)
 
 @expose_admin('/edit/<path:key>/')
 def edit(request, key):
@@ -224,7 +224,7 @@ def edit(request, key):
         post.invalidate_cache()
         if form.save.data:
             return redirect(url_for('nut:articles/list'), 301)
-    return render_template('articles/form.html', form=form, post=post, status=status)
+    return render_template('app:articles/form.html', form=form, post=post, status=status)
 
 @expose_admin('/delete/<path:key>/')
 def delete(request, key):
@@ -232,4 +232,4 @@ def delete(request, key):
     if request.method == 'POST':
         post.delete()
         return redirect(url_for('nut:articles/list'), 301)
-    return render_template('post_confirm_delete.html', post=post)
+    return render_template('app:articles/post_confirm_delete.html', post=post)

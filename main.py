@@ -26,6 +26,7 @@ from werkzeug.routing import RequestRedirect
 from werkzeug.exceptions import NotFound
 from jinja2 import Environment
 from jinja2 import FileSystemLoader
+from jinja2 import PrefixLoader
 
 from hazel.util import manager
 from hazel.util import local
@@ -102,11 +103,12 @@ def application(environ, start_response):
 ################################################################################
 def main():
     appSettings = AppSettings()
-    template_paths = [path.join(base_path, 'templates')]\
-                   + [path.join(base_path, 'nuts', nut, 'templates')\
-                      for nut in appSettings.nuts]
-    jinja_env.loader=FileSystemLoader(template_paths)
-    layout_env.loader=LayoutLoader()
+    loader_dict = {'app': FileSystemLoader([path.join(base_path, 'templates')]),
+                   'nut:layout': LayoutLoader() }
+    for nut in appSettings.nuts:
+        loader_dict['app:%s' % nut] = FileSystemLoader([path.join(base_path, 'nuts', nut, 'templates')])
+    
+    jinja_env.loader = layout_env.loader = PrefixLoader(loader_dict)
     # at this point all other modules should have been loaded
     local.url_map, local.views = build_urls()
     run_wsgi_app(application)

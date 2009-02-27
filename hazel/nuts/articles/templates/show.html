@@ -1,5 +1,5 @@
 {# -*- coding: utf-8 -*- #}
-{% extends "articles/base.html" %}
+{% extends "app:articles/base.html" %}
 {% block title_ext %}{{ post.title|smartypants }} ({{ post.pub_date|date("%a %b %d %Y") }}) | {% endblock %}
 {% block body %}
 {% set prev = post.prev() %}

@@ -48,7 +48,7 @@ def list(request):
             break
     if root is not None:
         root = rec(root, files)
-    return render_template('files/list.html', root=root)
+    return render_template('app:files/list.html', root=root)
 
 @expose_admin('/add_folder/',   endpoint='add_folder', defaults={'type': FOLDER })
 @expose_admin('/add_to/<key>/', endpoint='add_to')
@@ -87,7 +87,7 @@ def add(request, key=None, type=FILE):
             return redirect(url_for('nut:files/list'), 301)
         if form.cont.data is True:
             return redirect(url_for('nut:files/edit', key=file.key()), 301)
-    return render_template('files/form.html', form=form)
+    return render_template('app:files/form.html', form=form)
 
 @expose_admin('/edit/<key>/')
 def edit(request, key):
@@ -98,7 +98,7 @@ def edit(request, key):
         file.put()
         if form.save.data is True:
             return redirect(url_for('nut:files/list'), 301)
-    return render_template('files/form.html', form=form, file=file)
+    return render_template('app:files/form.html', form=form, file=file)
 
 @expose_admin('/delete/<key>/')
 def delete(request, key):
@@ -114,7 +114,7 @@ def delete(request, key):
     files = dict([(n.get_key(), n) for n in File.all().filter("ancestors = ", key)])
     file = rec(file, files)
 
-    return render_template('files/confirm_delete.html', file=file, form=form)
+    return render_template('app:files/confirm_delete.html', file=file, form=form)
 
 @expose_admin('/move/<A>/<mode>/<B>/')
 def move(request, A, mode, B):

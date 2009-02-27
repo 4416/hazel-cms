@@ -19,7 +19,7 @@ def list(request):
         module = __import__('hazel.nuts.%s' % nut, fromlist=['hazel.nuts'])
         nuts.append(dict(map(lambda (key, prop): (key, getattr(module, prop, None)),
                              _nut.items())))
-    return render_template('admin/index.html', nuts=nuts)
+    return render_template('app/admin/index.html', nuts=nuts)
 
 def nut(request):
     from hazel import NutSettings, SettingsForm, handle_form_data
@@ -49,7 +49,7 @@ def nut(request):
             handler[nut](nuts[nut]['form'])
         updated = True
         return redirect(url_for('admin/configuration', message='updated'), 302)
-    return render_template('configure.html', nuts=nuts, updated=updated)
+    return render_template('app/configure.html', nuts=nuts, updated=updated)
 
 from hazel.util.net import Response
 from struct import pack

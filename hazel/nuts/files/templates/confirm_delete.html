@@ -1,5 +1,5 @@
 {# -*- coding: utf-8 -*- #}
-{% extends 'admin.html' %}
+{% extends 'app/admin.html' %}
 
 {% macro rec(node, id=None, class=None) %}
 {% if id %}
@@ -29,33 +29,33 @@
 
 {% block content %}
 <!-- content -->
-        <h1>Delete Page</h1>
+        <h1>Delete File</h1>
 
  <form action="." method="post">
 <div class="form-area">
-Do you really want to delte this Page:
+Do you really want to delte this File:
   <div id="meta-pages" class="pages">
   <div id="div-title" class="title" title="Page Title">
-	{{ node.name }}
+	{{ file.name }}
   </div>
   </div> 
-  {% if node.child_nodes|length > 0 %}
-  The following Pages are affected:
+  {% if file.child_nodes|length > 0 %}
+  The following Files are affected:
   <div style="background-color: #fff">
   <div id="site-map-def">
-  <div class="page">Page</div>
+  <div class="page">File</div>
   <div class="status">Status</div>
   </div>
-  {{ rec(node, id='site-map') }}
+  {{ rec(file, id='site-map') }}
   </div>
   {% endif %}
   </div>
   <p class="buttons">
     {{ form.drop(class='button') }}
-  {% if node.child_nodes|length > 0 %}
+  {% if file.child_nodes|length > 0 %}
     {{ form.cascade(class='button') }}
   {% endif %}
-    or <a href="/admin/pages/">Cancel</a>
+    or <a href="/admin/files/">Cancel</a>
   </p>
 
 </form>

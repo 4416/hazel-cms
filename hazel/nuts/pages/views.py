@@ -44,7 +44,7 @@ def show(request, key):
     if page.layout is None:
         raise Exception("invalid layout")
     string = [
-            "{%% extends '%s' %%}" % page.layout.name,
+            "{%% extends 'nut:layout/%s' %%}" % page.layout.name,
             "{%% block body %%} %s {%% endblock %%}" % page.body ]
     for block in page.blocks:
         string.append("{%% block %s %%} %s {%% endblock %%}" % (block.name, block.body))
@@ -65,7 +65,7 @@ def list_pages(request):
             break
     if root is not None:
         root = rec(root, nodes)
-    return render_template('pages/list.html', root=root)
+    return render_template('app:pages/list.html', root=root)
 
 @expose_admin('/p/add/', defaults={'key': None})
 @expose_admin('/p/add/<key>/')
@@ -124,7 +124,7 @@ def add(request, key):
             if form.cont.data is True:
                 return redirect(url_for('nut:pages/edit', key=page.get_key()), 301)
 
-    return render_template('pages/form.html', form=form, add=add, blocks=blocks)
+    return render_template('app:pages/form.html', form=form, add=add, blocks=blocks)
 
 @expose_admin('/p/edit/<key>/')
 def edit(request, key):
@@ -174,7 +174,7 @@ def edit(request, key):
                 return redirect(url_for('nut:pages/list_pages'), 301)
             if layout_val is not None:
                 form.layout.data = layout_val
-    return render_template('pages/form.html', form=form, add=add, blocks=blocks.items(), mode='edit', node=node)
+    return render_template('app:pages/form.html', form=form, add=add, blocks=blocks.items(), mode='edit', node=node)
 
 @expose_admin('/p/delete/<key>/')
 def delete(request, key):
@@ -199,7 +199,7 @@ def delete(request, key):
     node = Node.get(key)
     nodes = dict([(n.get_key(), n) for n in Node.all().filter("ancestors = ", key)])
     node = rec(node, nodes)
-    return render_template('pages/confirm_delete.html', form=form,
+    return render_template('app:pages/confirm_delete.html', form=form,
                            node=node)
 
 @expose_admin('/p/add_folder/')
@@ -223,7 +223,7 @@ def add_folder(request):
             return redirect(url_for('nut:pages/list_pages'), 301)
         if form.cont.data is True:
             return redirect(url_for('nut:pages/edit', key=page.get_key()), 301)
-    return render_template('pages/form.html', form=form)
+    return render_template('app:pages/form.html', form=form)
 
 @expose_admin('/p/move/<A>/<mode>/<B>/')
 def move(request, A, mode, B):
@@ -243,7 +243,7 @@ def move(request, A, mode, B):
 @expose_admin('/l/', tab='Layouts')
 def list_layouts(request):
     layouts = Layout.all().order('name')
-    return render_template('layouts/list.html', layouts=layouts)
+    return render_template('app:pages/layouts/list.html', layouts=layouts)
 
 @expose_admin('/l/add/')
 def add_layout(request):
@@ -259,7 +259,7 @@ def add_layout(request):
             return redirect(url_for('nut:pages/list_layouts'), 301)
         if form.cont.data is True:
             return redirect(url_for('nut:pages/edit', key=layout.key()), 301)
-    return render_template('layouts/form.html', form=form)
+    return render_template('app:pages/layouts/form.html', form=form)
 
 @expose_admin('/l/edit/<key>/')
 def edit_layout(request, key):
@@ -273,7 +273,7 @@ def edit_layout(request, key):
             node.invalidate_cache()
         if form.save.data is True:
             return redirect(url_for('nut:pages/list_layouts'), 301)
-    return render_template('layouts/form.html', form=form, layout=layout)
+    return render_template('app:pages/layouts/form.html', form=form, layout=layout)
 
 @expose_admin('/l/delete/<key>/')
 def delete_layout(request, key):
@@ -283,4 +283,4 @@ def delete_layout(request, key):
         if form.drop.data is True:
             layout.delete()
             return redirect(url_for('nut:pages/list_layouts'), 301)
-    return render_template('layouts/confirm_delete.html', layout=layout, form=form)
+    return render_template('app:pages/layouts/confirm_delete.html', layout=layout, form=form)

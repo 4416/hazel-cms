@@ -9,4 +9,4 @@ from urls import expose_admin
 def list(request):
     if request.args.get('flush',False):
         memcache.flush_all()
-    return render_template('cache/list.html', memcache=memcache.get_stats())
+    return render_template('app:cache/list.html', memcache=memcache.get_stats())

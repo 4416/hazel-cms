@@ -1,5 +1,5 @@
 {# -*- coding: utf-8 -*- #}
-{% extends "admin.html" %}
+{% extends "app/admin.html" %}
 
 {% macro fff(img) -%}
   <img src="{{ url_for("famfamfam/get", file=img + ".png") }}" />
