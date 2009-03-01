@@ -1,3 +1,5 @@
+/* @override http://localhost:8086/media/stylesheets/dragon.css */
+
 body {
 	background-color: #e5e5e5;
 	font-family: "Lucida Grande","Bitstream Vera Sans",Helvetica,Verdana,Arial,sans-serif;
@@ -314,6 +316,13 @@ small {
 form {
 	padding: 0;
 	margin: 0;
+}
+
+div.backup {
+	float: right;
+}
+div.backup form {
+	display: inline; 
 }
 
 #list {

@@ -71,7 +71,11 @@
                  published_next, 'published') }}
   {% endif %}
 
-
+<div class="backup">{{ link('nut:articles/backup', 'backup') }}
+  <small>or</small> <form action="." method="post"
+  enctype="multipart/form-data"> <input id="backup"
+  name="backup" type="file" value="" /> <input type="submit"
+  value="restore" /></form></div>
 Add a {{ link('nut:articles/add','new Article') }}.
 </div>
 {% endblock %}

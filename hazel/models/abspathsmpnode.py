@@ -9,6 +9,11 @@ from google.appengine.api import memcache
 from hazel.models import SortedMPNode
 
 class AbsPathSMPNode(SortedMPNode):
+
+    abs_path = db.StringProperty(default='')
+
+    slug = db.StringProperty(default='')
+   
     @classmethod
     def callbacks(cls):
         sep = u'/'

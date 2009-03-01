@@ -95,8 +95,8 @@ def application(environ, start_response):
         return local.views[endpoint](request, **args)
     except HTTPException, e:
         return e
-    except Exception, e:
-        return NotFound()
+#    except Exception, e:
+#        return NotFound()
 
 ################################################################################
 # initiation

@@ -21,6 +21,8 @@ from hazel.util.globals import url_for
 
 from urls import expose, expose_admin
 from models import Post
+from . import NutSettings
+
 ################################################################################
 # constants
 ################################################################################
@@ -99,7 +101,13 @@ def update_entity(key_name, **kwds):
 def index(request):
     latest = Post.pub().fetch(5)
     # latest.reverse()
-    return render_template('app:articles/index.html', posts=latest)
+    ns = NutSettings()
+    template = ns.index_layout
+    if template:
+        template = 'nut:layout/%s' % template
+    else:
+        template = 'app:articles/index.html'
+    return render_template(template, posts=latest)
     latest = Post.pub().get()
     if latest:
         return redirect(quote((u'/%s' % latest.lookup).encode('utf-8')), 301)
@@ -115,7 +123,13 @@ def show(request, key):
         post = Post.get_by_key_name(key)
         prevent_cache = True
     if post:
-        resp = render_template('app:articles/show.html', post=post)
+        ns = NutSettings()
+        template = ns.articles_layout
+        if template:
+            template = 'nut:layout/%s' % template
+        else:
+            template = 'app:articles/show.html'
+        resp = render_template(template, post=post)
         resp.prevent_cache = prevent_cache
     else:
         resp = render_template('app/404.html')
@@ -125,7 +139,13 @@ def show(request, key):
 @expose('/search/')
 @memcached_for('15m')
 def search(request):
-    return render_template('app:articles/search.html');
+    ns = NutSettings()
+    template = ns.search_layout
+    if template:
+        template = 'nut:layout/%s' % template
+    else:
+        template = 'app:articles/search.html'
+    return render_template(template)
 
 @expose('/archive/', defaults={ 'tag': None })
 @expose('/topic/<tag>/')
@@ -140,7 +160,13 @@ def topic(request, tag):
                               lambda bm: qs.filter('sort_key <', bm),
                               lambda bm: rqs.filter('sort_key >', bm),
                               bookmark=request.args.get('bookmark', None))
-    return render_template('app:articles/archive.html',
+    ns = NutSettings()
+    template = ns.archive_layout
+    if template:
+        template = 'nut:layout/%s' % template
+    else:
+        template = 'app:articles/archive.html'    
+    return render_template(template,
                            prev=prev, next=next,
                            posts = posts,
                            tag=tag)
@@ -151,6 +177,10 @@ def topic(request, tag):
 def list(request):
     from logging import info
     from datetime import datetime
+
+    if request.method == 'POST':
+        handle_backup(request.files.get('backup'))
+    
     pub_bm, upc_bm, unp_bm = None, None, None
     if request.args.get('list','') == 'published':
         pub_bm = request.args.get('bookmark', None)
@@ -233,3 +263,69 @@ def delete(request, key):
         post.delete()
         return redirect(url_for('nut:articles/list'), 301)
     return render_template('app:articles/post_confirm_delete.html', post=post)
+
+
+from hazel.models.restoremap import RestoreMap
+
+from struct import pack
+from struct import unpack
+from struct import error
+from logging import info
+from google.appengine.api.datastore import Entity
+from pickle import dumps
+from pickle import loads
+from google.appengine.ext import db
+from google.appengine.api import users
+from zlib import compress
+from zlib import decompress
+
+
+@expose_admin('/backup/', defaults={'kind': 'hazel.nuts.articles.models.Post'})
+def backup(request,kind):
+    def encode(x):
+        if isinstance(x, db.Model):
+            return str(x.key())
+        if isinstance(x, users.User):
+            return x.email()
+        return x
+    resp = Response(mimetype="application/python-eval-dump", content_type="application/python-eval-dump")
+    module, obj = kind.rsplit('.',1)
+    mod = __import__(module, fromlist=[module.rsplit('.',1)])
+    model = getattr(mod,obj)
+    for p in model.all():
+        data = (p.__module__, p.__class__.__name__, str(p.key()), [(x, encode(getattr(p,x))) for x in p.properties() if encode(x) is not None])
+        pdata = compress(dumps(data,-1),9)
+        resp.stream.write(pack('I',len(pdata)))
+        resp.stream.write(pdata)
+    return resp    
+
+
+def handle_backup(f):
+    key_map = {}
+    def decode(x,y):
+        if y is None:
+            return y
+        if isinstance(x, db.UserProperty):
+            return users.User(email=y)
+        if isinstance(x, db.ReferenceProperty):
+            key = RestoreMap.sink_for_key(y)
+            if key:
+                return db.Key(key)
+            return db.Key(y)
+        return y
+    while True:
+        try:
+            (l,) = unpack('I', f.read(4))
+            t = loads(decompress(f.read(l)))
+            mod = __import__(t[0], fromlist=[t[0]])
+            kind = getattr(mod,t[1])
+            key = db.Key(t[2])
+            kwds = dict([(k,decode(getattr(kind, k), v)) for k,v in t[3]])
+            if key.name():
+                kwds['key_name'] = key.name()
+            obj = kind(**kwds)
+            obj.put()
+            RestoreMap.create_or_update(str(key), sink=str(obj.key()))
+        except error, e:
+            break
+

@@ -4,7 +4,7 @@ from nuts.pages.models import Layout
 
 class LayoutLoader(BaseLoader):
     def get_source(self, environment, template):
-        layout = Layout.all().filter('name =', template).get()
+        layout = Layout.all().filter('abs_path =', template).get()
         if layout is None:
             raise TemplateNotFound(template)
         source = layout.body

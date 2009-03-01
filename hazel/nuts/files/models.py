@@ -23,9 +23,6 @@ class File(AbsPathSMPNode, CacheUtilMixin):
     type = db.IntegerProperty(default=FOLDER, required=True)
     name = db.StringProperty(required=True, default='root')
 
-    abs_path = db.StringProperty(default='')
-
-    slug = db.StringProperty(default='')
     breadcrumb = db.StringProperty()
     updated = db.DateTimeProperty()
     author = db.UserProperty()

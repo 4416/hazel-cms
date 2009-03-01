@@ -1,9 +1,13 @@
 ﻿application: journal-ma
-version: hazel-cms-2
+version: hazel-cms-3
 runtime: python
 api_version: 1
 
 handlers:
+- url: /admin_console/.*
+  script: $PYTHON_LIB/google/appengine/ext/admin
+  login: admin
+
 - url: /media
   static_dir: media
 

@@ -2,6 +2,8 @@
 from datetime import datetime
 from datetime import timedelta
 
+from logging import info
+
 from google.appengine.api import users
 from google.appengine.ext import db
 from google.appengine.api import memcache
@@ -10,8 +12,6 @@ from werkzeug import redirect
 import wtforms
 
 from hazel.admin.forms import FolderForm, PageForm, ConfirmDeleteForm, BlockAddForm, BlockForm
-from hazel.admin.forms import LayoutForm, ConfirmDeleteLayoutForm
-
 
 from hazel.util.decorators import memcached
 from hazel.util.globals import url_for
@@ -23,12 +23,13 @@ from hazel.util.tools import rec
 from hazel.util.tools import pager
 from hazel.util.net import Response
 
+from hazel.nuts.layouts.models import Layout
+
 from urls import expose, expose_admin
 
 from models import PAGE
 from models import FOLDER
 from models import Node
-from models import Layout
 from models import Block
 
 ################################################################################
@@ -44,8 +45,9 @@ def show(request, key):
     if page.layout is None:
         raise Exception("invalid layout")
     string = [
-            "{%% extends 'nut:layout/%s' %%}" % page.layout.name,
+            "{%% extends 'nut:layout/%s' %%}" % page.layout.abs_path,
             "{%% block body %%} %s {%% endblock %%}" % page.body ]
+    info(string)
     for block in page.blocks:
         string.append("{%% block %s %%} %s {%% endblock %%}" % (block.name, block.body))
     resp = layout_response_from_string('\n'.join(string), page.content_type, title=page.name, this=page)
@@ -76,7 +78,8 @@ def add(request, key):
     blocks = []
     form = PageForm(request.form)
     add  = BlockAddForm(request.form, prefix='_add')
-    form.layout.choices = [('Layout:None', '---')] + [(unicode(l), l.name) for l in Layout.all().order('name')]
+
+    form.layout.choices =  Layout.get_key_to_path()
     if request.method == 'POST':
         # some logic to find __block elements.
         for key in request.form:
@@ -135,7 +138,7 @@ def edit(request, key):
         form = FolderForm(request.form, obj=node)
     else:
         form = PageForm(request.form, obj=node)
-        form.layout.choices = [('Layout:None', '---')] + [(unicode(l), l.name) for l in Layout.all().order('name')]
+        form.layout.choices =  Layout.get_key_to_path()
         for block in node.blocks:
             blocks[block.name] = BlockForm(request.form, obj=block, prefix='__block:%s__' % block.name)
 
@@ -232,55 +235,3 @@ def move(request, A, mode, B):
                'to': lambda x,y: Node.move(x, to=y) }
     switch[mode](A,B)
     return redirect(url_for('nut:pages/list_pages'), 301)
-
-################################################################################
-# Layout
-################################################################################
-
-################################################################################
-# pub Views
-
-@expose_admin('/l/', tab='Layouts')
-def list_layouts(request):
-    layouts = Layout.all().order('name')
-    return render_template('app:pages/layouts/list.html', layouts=layouts)
-
-@expose_admin('/l/add/')
-def add_layout(request):
-    form = LayoutForm(request.form)
-    if request.method == "POST" and form.validate():
-        name = form.name.data
-        body = form.body.data
-        layout = Layout(name=name, body=body,
-                        author=users.get_current_user(),
-                        updated=datetime.now())
-        layout.put()
-        if form.save.data is True:
-            return redirect(url_for('nut:pages/list_layouts'), 301)
-        if form.cont.data is True:
-            return redirect(url_for('nut:pages/edit', key=layout.key()), 301)
-    return render_template('app:pages/layouts/form.html', form=form)
-
-@expose_admin('/l/edit/<key>/')
-def edit_layout(request, key):
-    layout = Layout.get(key)
-    form = LayoutForm(request.form, obj=layout)
-    if request.method == "POST" and form.validate():
-        form.auto_populate(layout)
-        layout.put()
-        # clear depending caches
-        for node in layout.get_affected_nodes():
-            node.invalidate_cache()
-        if form.save.data is True:
-            return redirect(url_for('nut:pages/list_layouts'), 301)
-    return render_template('app:pages/layouts/form.html', form=form, layout=layout)
-
-@expose_admin('/l/delete/<key>/')
-def delete_layout(request, key):
-    layout = Layout.get(key)
-    form = ConfirmDeleteLayoutForm(request.form)
-    if request.method == "POST" and form.validate():
-        if form.drop.data is True:
-            layout.delete()
-            return redirect(url_for('nut:pages/list_layouts'), 301)
-    return render_template('app:pages/layouts/confirm_delete.html', layout=layout, form=form)

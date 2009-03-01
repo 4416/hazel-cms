@@ -40,6 +40,10 @@ def nut(request):
         nuts[nut] = {'settings' : ns(),
                        'form': sf(request.form, obj=ns(), \
                                   prefix='%s_config' % nut)}
+        try:
+            nuts[nut]['form'].prepopulate()
+        except:
+            pass
         handler[nut] = hd
     updated = False
     if request.method == 'POST' and all([nut['form'].validate()\
@@ -89,13 +93,6 @@ def pb_rec(request):
             info(e)
             break
     return Response('Posted!')
-
-def encode(x):
-    if isinstance(x, db.Model):
-        return str(x.key())
-    if isinstance(x, users.User):
-        return x.email()
-    return x
 
 
 def eb(request, kind):

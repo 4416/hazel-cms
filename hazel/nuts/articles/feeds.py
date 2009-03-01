@@ -44,7 +44,7 @@ class MyFeed(Feed):
     def item_content(self, item):
         return {'type': 'html',
                 'xml:base': '%s/' % self.base_url },\
-                render_jinja('nut:articles/feed_content.html', object=item)
+                render_jinja('app:articles/feed_content.html', object=item)
     
 @expose('/feeds/<name>/')
 @memcached_for('15m')
